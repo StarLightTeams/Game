@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import config.GameConfig;
+import entity.FactoryRooms.FactoryDoubleRoom;
 
 
 
@@ -31,6 +32,19 @@ public class MainController {
 			}
 		}
 	}
+	
+	/**
+	 * 初始化房间
+	 */
+	public void initRooms(){
+		//创建两个普通房间列表
+		for(int i=0;i<GameConfig.doubleRoomCount;i++) {
+			String roomId = i+"00"+i;
+			new FactoryDoubleRoom().createRoom(roomId);
+		}
+		
+	}
+	
 	
 	public static void main(String[] args) {
 		MainController controller =new MainController();
