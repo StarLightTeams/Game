@@ -2,7 +2,6 @@ package config;
 
 /*
  * 服务器配置
- * add by king 2017/10/15
  */
 public class ServerConfig {
 
@@ -17,9 +16,6 @@ public class ServerConfig {
 		}
 		return instance;
 	}
-	/*
-	 * 
-	 */
 	//端口
 	public int port = 10020;
 	public int serverConnectionTime = 1000;//链接时间

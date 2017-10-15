@@ -5,6 +5,9 @@ import java.util.Map;
 
 import entity.rooms.Room;
 
+/**
+ *	游戏配置 
+ */
 public class GameConfig {
 	
 	//服务器中的总人数

@@ -8,7 +8,6 @@ import entity.client.ClientPortData;
 import entity.rooms.Room;
 
 /*
- * add by king 
  * 游戏数据类 单例模式
  */
 public class GameData {

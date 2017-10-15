@@ -6,10 +6,7 @@ import inters.FactoryRoom;
 
 /**
  * 双人普通间工厂
- * @author zb
- *
  */
-
 public class FactoryDoubleRoom implements FactoryRoom {
 
 	public DoubleRoom createRoom(String roomId) {

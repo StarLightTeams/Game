@@ -18,7 +18,9 @@ import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
 
-
+/**
+ *	服务器主类
+ */
 
 public class MainController {
 	//服务
@@ -32,7 +34,7 @@ public class MainController {
 	private boolean startserver() throws Exception{
 		initRooms();
 		server = new ServerSocket(sc.port);
-		System.out.println("----------------【服务器开启监控端口:--------------"+sc.port+"】");
+		System.out.println("----------------【服务器开启监控端口:"+sc.port+"】--------------");
 		System.out.println("----------------【等待客户机链接中】---------------");
 		waitConnection();
 		return true;
@@ -59,20 +61,19 @@ public class MainController {
 					g.userclientmap.put(ip, clientportdata);
 					if(ClientTools.addClient(socket)) {
 						System.out.println("客户端:"+ip+":"+port+"添加成功");
+						System.out.println("正在运行的客户端:");
+						for(Map.Entry<String, ClientData> entry:g.clientmap.entrySet()) {
+							System.out.print("客户端:"+entry.getValue().getIp()+":"+entry.getValue().getPort());
+							System.out.println();
+						}
+						System.out.println("----------------------------------");
 					}else {
 						System.out.println("客户端:"+ip+":"+port+"添加失败");
 					}
 				}else {
-					System.out.println("322222222");
 					System.out.println("客户端:"+ip+"用户达到上限");
 				}
-				/*
-				for(int i=0;i<GameConfig.serverCount;i++) {
-					System.out.print("客户端:"+g.clientmap.get(i).getIp()+":"+g.clientmap.get(i).getPort());
-					System.out.println();
-				}
-				System.out.println("----------------------------------");
-				*/
+				
 				//将用户添加入房间
 				
 			}catch(Exception e){

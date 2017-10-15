@@ -6,6 +6,9 @@ import config.GameConfig;
 import data.GameData;
 import entity.client.ClientData;
 
+/**
+ * 客户端方法
+ */
 public class ClientTools {
 	
 	public static GameData g = GameData.getSingleton();

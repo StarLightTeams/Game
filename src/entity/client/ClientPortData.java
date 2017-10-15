@@ -6,20 +6,17 @@ import java.util.ArrayList;
 import config.GameConfig;
 
 /**
- * ip中端口的信息
- *
+ * ip中端口的信息类
  */
-
 public class ClientPortData {
 	//端口的数量
 	public int portCount;
 	//端口号
 	public ArrayList<Integer> ports = new ArrayList<Integer>();
 	
-	
 	public ClientPortData() {
+		
 	}
-
 
 	/**
 	 * 增加端口

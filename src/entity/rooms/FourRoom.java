@@ -4,10 +4,7 @@ import java.util.Date;
 
 /**
  * 四人普通间
- * @author zb
- *
  */
-
 public class FourRoom extends Room{
 	
 	public FourRoom(String roomId){

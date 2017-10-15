@@ -14,5 +14,6 @@ public class Player {
 	public int playerCard;
 	//玩家道具
 	public Map<String,Integer> djmap;
+	//玩家状态【】
 }
 
