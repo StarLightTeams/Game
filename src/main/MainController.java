@@ -4,12 +4,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+import tool.ClientTools;
 import tool.CreateRoomTools;
 import config.GameConfig;
 import config.ServerConfig;
 import data.GameData;
 import entity.FactoryRooms.FactoryDoubleRoom;
 import entity.FactoryRooms.FactoryFourRoom;
+import entity.client.ClientData;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
@@ -38,6 +40,19 @@ public class MainController {
 		while(true){
 			try{
 				socket=server.accept();
+				//有客户端连接,每收到服务器socket放入客户端列表中
+				if(ClientTools.addClient(socket)) {
+					System.out.println("客户端:"+socket.getInetAddress()+":"+socket.getPort()+"添加成功");
+				}else {
+					System.out.println("客户端:"+socket.getInetAddress()+":"+socket.getPort()+"添加失败");
+				}
+				for(int i=0;i<GameConfig.serverCount;i++) {
+					System.out.print("客户端:"+g.clientmap.get(i).getIp()+":"+g.clientmap.get(i).getPort());
+					System.out.println();
+				}
+				System.out.println("----------------------------------");
+				
+				//将用户添加入房间
 				
 			}catch(Exception e){
 				System.out.println("客户端连接发生异常");
