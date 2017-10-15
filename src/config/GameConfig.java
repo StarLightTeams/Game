@@ -6,8 +6,7 @@ import java.util.Map;
 import entity.rooms.Room;
 
 public class GameConfig {
-	//端口
-	public static int port = 10020;
+	
 	
 	//二人普通房间数
 	public static int doubleRoomCount=10;

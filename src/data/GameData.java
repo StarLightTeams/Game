@@ -27,7 +27,7 @@ public class GameData {
 		}
 		return gamedata;
 	}
-
+	
 	// 房间配置<房间类型，房间列表《房间号，房间数据》>
 	public Map<Integer, Map<String,Room>> roommap = new HashMap<Integer, Map<String,Room>>();
 }

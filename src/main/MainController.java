@@ -2,6 +2,7 @@ package main;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 import tool.CreateRoomTools;
 import config.GameConfig;
@@ -11,6 +12,7 @@ import entity.FactoryRooms.FactoryDoubleRoom;
 import entity.FactoryRooms.FactoryFourRoom;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
+import entity.rooms.Room;
 
 
 
@@ -24,10 +26,11 @@ public class MainController {
 	//获取单例
 	GameData g =GameData.getSingleton();
 	private boolean startserver() throws Exception{
-		
-		server = new ServerSocket(GameConfig.port);
-		System.out.println("----------------【服务器开启监控端口:--------------"+GameConfig.port+"】");
+		initRooms();
+		server = new ServerSocket(sc.port);
+		System.out.println("----------------【服务器开启监控端口:--------------"+sc.port+"】");
 		System.out.println("----------------【等待客户机链接中】---------------");
+		waitConnection();
 		return true;
 	}
 
@@ -48,20 +51,21 @@ public class MainController {
 	public void initRooms(){
 		
 		//创建两个普通房间列表
-		
+		//初始化两个房间
+		g.roommap.put(2, new  HashMap<String,Room>());
+		g.roommap.put(4, new  HashMap<String,Room>());
 		//双人普通房
 		for(int i=0;i<GameConfig.doubleRoomCount;i++) {
 			String roomId = CreateRoomTools.createRoomID(2, i);
 			DoubleRoom dr =new FactoryDoubleRoom().createRoom(roomId);
-			
-			g.roommap.put(roomId, dr);
+			CreateRoomTools.insertTable(g.roommap, 2, roomId, dr);
 			
 		}
 		//四人普通房
 		for(int i=0;i<GameConfig.fourRoomCount;i++) {
 			String roomId = CreateRoomTools.createRoomID(4, i);
 			FourRoom fr =new FactoryFourRoom().createRoom(roomId);
-			g.roommap.put(roomId, fr);
+			CreateRoomTools.insertTable(g.roommap, 4, roomId, fr);
 		}
 		
 	}
@@ -75,6 +79,7 @@ public class MainController {
 			}
 		}catch(Exception e){
 			System.out.println("服务器发生错误");
+			e.printStackTrace();
 		}
 	}
 }
