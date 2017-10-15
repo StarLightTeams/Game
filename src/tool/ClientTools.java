@@ -14,8 +14,9 @@ public class ClientTools {
 	 */
 	public static boolean addClient(Socket socket) {
 		try {
-			ClientData gameDate = new ClientData(socket);
-			g.clientmap.put(GameConfig.serverCount,gameDate);
+			ClientData gameData = new ClientData(socket);
+			String flag = gameData.getIp()+":"+gameData.getPort();
+			g.clientmap.put(flag,gameData);
 			GameConfig.serverCount++;
 			return true;
 		}catch(Exception e) {

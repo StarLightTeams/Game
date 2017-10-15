@@ -5,7 +5,7 @@ import java.net.Socket;
 
 public class ClientData {
 	//客户端ip
-	private InetAddress ip;
+	private String ip;
 	//客户端的port
 	private int port;
 	//客户端
@@ -18,16 +18,17 @@ public class ClientData {
 	}
 	
 	public ClientData(Socket clientSocket) {
-		this.ip = clientSocket.getInetAddress();
+		this.ip = clientSocket.getInetAddress().toString().substring(1);
 		this.port = clientSocket.getPort();
 		this.clientSocket = clientSocket;
 	}
 
-	public InetAddress getIp() {
+	
+	public String getIp() {
 		return ip;
 	}
 
-	public void setIp(InetAddress ip) {
+	public void setIp(String ip) {
 		this.ip = ip;
 	}
 
