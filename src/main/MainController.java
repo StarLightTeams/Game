@@ -53,7 +53,9 @@ public class MainController {
 		for(int i=0;i<GameConfig.doubleRoomCount;i++) {
 			String roomId = CreateRoomTools.createRoomID(2, i);
 			DoubleRoom dr =new FactoryDoubleRoom().createRoom(roomId);
+			
 			g.roommap.put(roomId, dr);
+			
 		}
 		//四人普通房
 		for(int i=0;i<GameConfig.fourRoomCount;i++) {

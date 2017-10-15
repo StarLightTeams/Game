@@ -1,4 +1,10 @@
 package tool;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import entity.rooms.Room;
+
 /*
  * 创建房间的工具类，所有的创建房间所需的工具
  */
@@ -15,5 +21,14 @@ public class CreateRoomTools {
 			roomid = peoplecount+""+no;
 		}
 		return roomid;
+	}
+	//插入表数据
+	public static boolean insertTable(Map<Integer, Map<String,Room>> roommap/*房间列表数据*/,int roomlx/*类型*/,int roomno/*房间序号*/,Room room/*房间数据*/){
+		Map<String,Room> t =new HashMap<String,Room>();
+		//房间
+		if(roommap.get(roomlx).get(roomno)!=null){
+			
+		}
+		return true;
 	}
 }
