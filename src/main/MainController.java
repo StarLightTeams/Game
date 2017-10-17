@@ -9,9 +9,11 @@ import tool.ClientTools;
 import tool.CreateRoomTools;
 import config.GameConfig;
 import config.ServerConfig;
+import config.entity.Log;
 import data.GameData;
 import entity.FactoryRooms.FactoryDoubleRoom;
 import entity.FactoryRooms.FactoryFourRoom;
+import entity.IO.MainIO;
 import entity.client.ClientData;
 import entity.client.ClientPortData;
 import entity.rooms.DoubleRoom;
@@ -21,7 +23,6 @@ import entity.rooms.Room;
 /**
  *	服务器主类
  */
-
 public class MainController {
 	//服务
 	ServerSocket server = null;
@@ -34,8 +35,8 @@ public class MainController {
 	private boolean startserver() throws Exception{
 		initRooms();
 		server = new ServerSocket(sc.port);
-		System.out.println("----------------【服务器开启监控端口:"+sc.port+"】--------------");
-		System.out.println("----------------【等待客户机链接中】---------------");
+		Log.d("----------------【服务器开启监控端口:"+sc.port+"】--------------");
+		Log.d("----------------【等待客户机链接中】---------------");
 		waitConnection();
 		return true;
 	}
@@ -60,24 +61,34 @@ public class MainController {
 				if(clientportdata.judgePortCount()) {
 					g.userclientmap.put(ip, clientportdata);
 					if(ClientTools.addClient(socket)) {
-						System.out.println("客户端:"+ip+":"+port+"添加成功");
-						System.out.println("正在运行的客户端:");
+						Log.d("客户端:"+ip+":"+port+"添加成功");
+						Log.d("正在运行的客户端:");
 						for(Map.Entry<String, ClientData> entry:g.clientmap.entrySet()) {
-							System.out.print("客户端:"+entry.getValue().getIp()+":"+entry.getValue().getPort());
-							System.out.println();
+							Log.d("客户端:"+entry.getValue().getIp()+":"+entry.getValue().getPort());
 						}
-						System.out.println("----------------------------------");
+						Log.d("----------------------------------");
+						
+						//开启接收,发送线程
+						MainIO mainIO = new MainIO(g.clientmap.get(ip+":"+port).getClientSocket(),"数据数据");
+						mainIO.send.start();
+						mainIO.receive.start();
+						g.mainiomap.put(ip+":"+port,mainIO);
+						
 					}else {
-						System.out.println("客户端:"+ip+":"+port+"添加失败");
+						Log.d("客户端:"+ip+":"+port+"添加失败");
 					}
 				}else {
-					System.out.println("客户端:"+ip+"用户达到上限");
+					Log.d("客户端:"+ip+"用户达到上限");
 				}
 				
+				//用户登录
 				//将用户添加入房间
 				
+				
+				
 			}catch(Exception e){
-				System.out.println("客户端连接发生异常");
+				e.printStackTrace();
+				Log.d("客户端连接发生异常");
 			}
 		}
 	}
@@ -96,7 +107,6 @@ public class MainController {
 			String roomId = CreateRoomTools.createRoomID(2, i);
 			DoubleRoom dr =new FactoryDoubleRoom().createRoom(roomId);
 			CreateRoomTools.insertTable(g.roommap, 2, roomId, dr);
-			
 		}
 		//四人普通房
 		for(int i=0;i<GameConfig.fourRoomCount;i++) {
@@ -115,7 +125,7 @@ public class MainController {
 				
 			}
 		}catch(Exception e){
-			System.out.println("服务器发生错误");
+			Log.d("服务器发生错误");
 			e.printStackTrace();
 		}
 	}

@@ -7,7 +7,6 @@ package thread;
 public class TimeClientThread extends Thread {
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		super.run();
 		while(true){
 			

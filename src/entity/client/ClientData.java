@@ -1,6 +1,5 @@
 package entity.client;
 
-import java.net.InetAddress;
 import java.net.Socket;
 
 /**
@@ -28,7 +27,6 @@ public class ClientData {
 		this.clientSocket = clientSocket;
 	}
 
-	
 	public String getIp() {
 		return ip;
 	}
