@@ -69,9 +69,9 @@ public class MainController {
 						Log.d("----------------------------------");
 						
 						//开启接收,发送线程
-						MainIO mainIO = new MainIO(g.clientmap.get(ip+":"+port).getClientSocket(),"数据数据");
-						mainIO.send.start();
-						mainIO.receive.start();
+						MainIO mainIO = new MainIO(g.clientmap.get(ip+":"+port).getClientSocket());
+						mainIO.sendMessage("数据数据");
+						mainIO.receiveMessage();
 						g.mainiomap.put(ip+":"+port,mainIO);
 						
 					}else {
