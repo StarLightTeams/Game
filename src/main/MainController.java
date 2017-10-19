@@ -68,6 +68,8 @@ public class MainController {
 						}
 						Log.d("----------------------------------");
 						
+						//得到当前客户端的接,发线程名
+						ClientTools.initClientThreadName(socket);
 						//开启接收,发送线程
 						MainIO mainIO = new MainIO(g.clientmap.get(ip+":"+port).getClientSocket());
 						mainIO.sendMessage("太多太多");

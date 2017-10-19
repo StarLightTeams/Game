@@ -14,15 +14,13 @@ import java.util.Vector;
 import config.entity.Log;
 import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
+import tool.ClientTools;
 
 /**
  * 主线程中的输出输入流类
  */
 public class MainIO {
-	//线程ip+:+port+:+1s 1表示服务器 ,2表示客户端 s表示发送 r表示接收
-	public String name;
-	//1表示服务器 ,2表示客户端
-	public String nameFlag = "1";
+	
 	public Socket clientSocket;
 	public Thread send;
 	public Thread receive;
@@ -31,7 +29,6 @@ public class MainIO {
 	
 	public MainIO(Socket clientSocket) {
 		this.clientSocket = clientSocket;
-		this.name = clientSocket.getInetAddress().toString().substring(1)+":"+clientSocket.getPort()+":"+nameFlag;
 		try {
 			is = clientSocket.getInputStream();
 			os = clientSocket.getOutputStream();
@@ -45,7 +42,7 @@ public class MainIO {
 	 * @param str
 	 */
 	public void sendMessage(String str) {
-		send = new FactoryThread().newThread(new sendThread(str),name+"s");
+		send = new FactoryThread().newThread(new sendThread(str),ClientTools.clientThreadSName);
 		send.setUncaughtExceptionHandler(new ThreadException());
 		send.start();
 	}
@@ -55,7 +52,7 @@ public class MainIO {
 	 */
 	
 	public void receiveMessage() {
-		receive = new FactoryThread().newThread(new receiveThread(),name+"r");
+		receive = new FactoryThread().newThread(new receiveThread(),ClientTools.clientThreadRName);
 		receive.setUncaughtExceptionHandler(new ThreadException());
 		receive.start();
 	}
