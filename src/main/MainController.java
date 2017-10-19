@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Test;
+
 import tool.ClientTools;
 import tool.CreateRoomTools;
 import config.GameConfig;
@@ -128,5 +130,9 @@ public class MainController {
 			Log.d("服务器发生错误");
 			e.printStackTrace();
 		}
+	}
+	@Test
+	public void test(){
+		CommandID 
 	}
 }

@@ -7,6 +7,9 @@ public class ICommand {
 	public CommandHeader header =new CommandHeader();
 	public int pos;
 	
+	public ICommand(){
+		
+	}
 	public ICommand(int id){
 		header.id = id;
 		header.length = 8;

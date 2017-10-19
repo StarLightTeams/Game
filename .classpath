@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="Jar/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="Jar/ezmorph-1.0.6.jar"/>
 	<classpathentry kind="lib" path="Jar/json-lib-2.2.3-jdk15.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
