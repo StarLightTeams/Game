@@ -32,10 +32,6 @@ public class MainIO {
 	public MainIO(Socket clientSocket) {
 		this.clientSocket = clientSocket;
 		this.name = clientSocket.getInetAddress().toString().substring(1)+":"+clientSocket.getPort()+":"+nameFlag;
-		send = new FactoryThread().newThread(new sendThread(),name+"s");
-		send.setUncaughtExceptionHandler(new ThreadException());
-		receive = new FactoryThread().newThread(new receiveThread(),name+"r");
-		receive.setUncaughtExceptionHandler(new ThreadException());
 		try {
 			is = clientSocket.getInputStream();
 			os = clientSocket.getOutputStream();
@@ -43,20 +39,25 @@ public class MainIO {
 			e.printStackTrace();
 		}
 	}
-	
-	public MainIO(Socket clientSocket,String data) {
-		this.clientSocket = clientSocket;
-		this.name = clientSocket.getInetAddress().toString().substring(1)+":"+clientSocket.getPort()+":"+nameFlag;
-		send = new FactoryThread().newThread(new sendThread(data),name+"s");
+
+	/**
+	 * 发送信息
+	 * @param str
+	 */
+	public void sendMessage(String str) {
+		send = new FactoryThread().newThread(new sendThread(str),name+"s");
 		send.setUncaughtExceptionHandler(new ThreadException());
+		send.start();
+	}
+	
+	/**
+	 * 接受信息
+	 */
+	
+	public void receiveMessage() {
 		receive = new FactoryThread().newThread(new receiveThread(),name+"r");
 		receive.setUncaughtExceptionHandler(new ThreadException());
-		try {
-			is = clientSocket.getInputStream();
-			os = clientSocket.getOutputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		receive.start();
 	}
 	
 	/**
