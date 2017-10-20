@@ -15,11 +15,11 @@ public class ICommand {
 		header.length = 8;
 	}
 	
-	public void WriteToBuffer(DataBuffer buffer){
+	public void WriteToBuffer(DataBuffer buffer,String str){
 		pos = buffer.Tell();
 		buffer.WriteInt(header.length);
 		buffer.WriteInt(header.id);
-		WriteBody(buffer);
+		WriteBody(buffer,str);
 //		int length = buffer.Tell() - pos;
 //		buffer.Seek(pos);
 //		buffer.WriteInt(length);
@@ -41,6 +41,6 @@ public class ICommand {
 //		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) header.length = "+header.length+", header.id = "+ header.id);
 		ReadBody(buffer);
 	}
-	public void WriteBody(DataBuffer buffer){};
+	public void WriteBody(DataBuffer buffer,String str){};
 	public void ReadBody(DataBuffer buffer){};
 }

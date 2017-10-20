@@ -16,9 +16,9 @@ public class ConnectCommand extends ICommand{
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-	public void WriteBody(DataBuffer buffer)
+	public void WriteBody(DataBuffer buffer,String str)
 	{
-		buffer.WriteString("连接成功");
+		buffer.WriteString(str);
 	}
 	public void ReadBody(DataBuffer buffer)
 	{

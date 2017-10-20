@@ -12,9 +12,11 @@ import java.net.Socket;
 import java.util.Vector;
 
 import config.entity.Log;
+import entity.agrement.ICommand;
 import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
 import tool.ClientTools;
+import tool.agreement.DataBuffer;
 
 /**
  * 主线程中的输出输入流类
@@ -41,8 +43,8 @@ public class MainIO {
 	 * 发送信息
 	 * @param str
 	 */
-	public void sendMessage(String str) {
-		send = new FactoryThread().newThread(new sendThread(str),ClientTools.clientThreadSName);
+	public void sendMessage(ICommand iCommand,String str) {
+		send = new FactoryThread().newThread(new sendThread(iCommand,str),ClientTools.clientThreadSName);
 		send.setUncaughtExceptionHandler(new ThreadException());
 		send.start();
 	}
@@ -50,7 +52,6 @@ public class MainIO {
 	/**
 	 * 接受信息
 	 */
-	
 	public void receiveMessage() {
 		receive = new FactoryThread().newThread(new receiveThread(),ClientTools.clientThreadRName);
 		receive.setUncaughtExceptionHandler(new ThreadException());
@@ -63,17 +64,21 @@ public class MainIO {
 	public class sendThread implements Runnable{
 		
 		String str = "";
+		ICommand iCommand;
 		public sendThread() {
 		}
-		public sendThread(String str) {
+		public sendThread(ICommand iCommand,String str) {
 			this.str = str;
+			this.iCommand = iCommand;
 		}
 		public synchronized void run() {
 			while(true) {
 				//传输json数据
 				try {
-					Log.d("["+Thread.currentThread().getName()+"]="+str);
-					os.write(str.getBytes());
+					DataBuffer data= createAgreeMentMessage(iCommand,str);
+					data.ReadChars();
+					Log.d("["+Thread.currentThread().getName()+"]="+str+","+data.getCharsLength());
+					os.write(data.readByte());
 					os.flush();
 					try {
 						Thread.sleep(1000);
@@ -96,7 +101,8 @@ public class MainIO {
 				try {
 					byte[] b = new byte[1024];
 					int len=is.read(b);
-					Log.d("["+Thread.currentThread().getName()+"]="+new String(b));
+					DataBuffer data = getAgreeMentMessage(b);
+					Log.d("["+Thread.currentThread().getName()+"]="+new String(data.buffer));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -104,4 +110,28 @@ public class MainIO {
 		}
 	}
 	
+	/**
+	 * 创建协议信息
+	 * @param iCommand
+	 * @param str
+	 * @return
+	 */
+	public DataBuffer createAgreeMentMessage(ICommand iCommand,String str){
+		DataBuffer data = new DataBuffer();
+		iCommand.WriteToBuffer(data,str);
+		return data;
+	}
+	
+	/**
+	 * 接受协议信息
+	 * @param bytes
+	 * @return
+	 */
+	public DataBuffer getAgreeMentMessage(byte[] bytes) {
+		DataBuffer data = new DataBuffer();
+		data.getChars(bytes);
+		return data;
+	}
+	
+
 }

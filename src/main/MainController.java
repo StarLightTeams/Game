@@ -77,7 +77,7 @@ public class MainController {
 						ClientTools.initClientThreadName(socket);
 						//开启接收,发送线程
 						MainIO mainIO = new MainIO(g.clientmap.get(ip+":"+port).getClientSocket());
-						mainIO.sendMessage("太多太多");
+						mainIO.sendMessage(new ConnectCommand(),"太多太多");
 						mainIO.receiveMessage();
 						g.mainiomap.put(ip+":"+port,mainIO);
 						
@@ -141,7 +141,7 @@ public class MainController {
 		ConnectCommand conect =new ConnectCommand();
 		DataBuffer buffer =new DataBuffer();
 //		conect.WritheLength(buffer);
-		conect.WriteToBuffer(buffer);
+		conect.WriteToBuffer(buffer,"太多太多");
 		
 		byte[] b =buffer.readByte();//分割
 		//-------------------------------
