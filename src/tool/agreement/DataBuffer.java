@@ -3,13 +3,14 @@ package tool.agreement;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 public class DataBuffer {
 
 	public int DATABUFFEREOF = 0x7fffffff;
 	public int DATABUFFERMAXBUFFERSIZE = 40960;
 
-	private char[] buffer;
+	public char[] buffer;
 	private char[] string_buffer;
 	private int position;
 	private int buffer_data_length;
@@ -241,7 +242,16 @@ public class DataBuffer {
 	      bb.put (bytes);
 	                 bb.flip ();
 	       CharBuffer cb = cs.decode (bb);
-	  
+	       buffer = cb.array();
+//	       System.out.println(new String(buffer));
 	   return cb.array();
+	}
+	public String getString(){
+		char[] c = buffer;
+//		System.out.println((int)c[0]);
+		char[] c1;
+		c1 = Arrays.copyOfRange(c, 1, c.length);
+//		System.out.print(new String(c1));
+		return new String(c1);
 	}
 }

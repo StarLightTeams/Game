@@ -140,12 +140,13 @@ public class MainController {
 	public void test(){
 		ConnectCommand conect =new ConnectCommand();
 		DataBuffer buffer =new DataBuffer();
-		buffer.WriteString("ÄãºÃ");
-		System.out.println(buffer.readByte());
-		char[] c = buffer.getChars(buffer.readByte());
-		System.out.println((int)c[0]);
-		char[] c1;
-		c1 = Arrays.copyOfRange(c, 1, c.length);
-		System.out.print(new String(c1));
+		conect.WriteBody(buffer);
+		byte[] b =buffer.readByte();//·Ö¸î
+		//-------------------------------
+		DataBuffer buffer1 =new DataBuffer();
+		buffer1.getChars(b);
+		conect.ReadBody(buffer1);
+		System.out.print(conect.body);
+		System.out.println("111111111111");
 	}
 }

@@ -41,6 +41,6 @@ public class ICommand {
 		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) header.length = "+header.length+", header.id = "+ header.id);
 		ReadBody(buffer);
 	}
-	void WriteBody(DataBuffer buffer){};
-	void ReadBody(DataBuffer buffer){};
+	public void WriteBody(DataBuffer buffer){};
+	public void ReadBody(DataBuffer buffer){};
 }
