@@ -20,9 +20,9 @@ public class ConnectCommand extends ICommand{
 	{
 		buffer.WriteString("连接成功");
 	}
-
 	public void ReadBody(DataBuffer buffer)
 	{
-		body=buffer.getString();
+//		buffer.ReadChar();
+		body=buffer.ReadString();
 	}
 }

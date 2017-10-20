@@ -18,7 +18,6 @@ public class DataBuffer {
 
 	public DataBuffer() {
 		buffer = new char[DATABUFFERMAXBUFFERSIZE];
-		string_buffer = new char[DATABUFFERMAXBUFFERSIZE];
 		position = 0;
 		buffer_data_length = 0;
 		charsLength = 0;
@@ -42,8 +41,8 @@ public class DataBuffer {
 	}
 
 	public char ReadChar() {
-		System.out
-				.println(" ReadChar() buffer[position] = " + buffer[position]);
+//		System.out
+//				.println(" ReadChar() buffer[position] = " + (int)buffer[position]);
 		return buffer[position++];
 	}
 
@@ -69,16 +68,19 @@ public class DataBuffer {
 		// unsigned char* ret = new unsigned char[len];
 		// System.arraycopy(buffer, position, ret, 0, len);
 		// strncpy((char*)ret,(const char* )buffer+position, len);
-		System.out.println("DataBuffer::ReadRawBytes len = " + len);
+//		System.out.println("DataBuffer::ReadRawBytes len = " + len);
+		string_buffer = new char[len];
+		
 		if (len == 0)
 			return null;
-		for (int i = 0; i < DATABUFFERMAXBUFFERSIZE; i++) {
+		for (int i = 0; i < len; i++) {
 			string_buffer[i] = 0;
 		}
 		for (int i = 0; i < len; i++) {
-			string_buffer[i] = buffer[position + len];
+			string_buffer[i] = buffer[position + i];
 		}
 		position += len;
+		
 		return string_buffer;
 	};
 
