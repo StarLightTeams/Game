@@ -139,9 +139,6 @@ public class MainController {
 	@Test
 	public void test(){
 		ConnectCommand conect =new ConnectCommand();
-//		DataBuffer buffer =new DataBuffer();
-//		conect.WritheLength(buffer);
-//		conect.WriteToBuffer(buffer,"Ì«¶àÌ«¶à");
 		
 		DataBuffer data = createAgreeMentMessage(conect,"hello111");
 		
@@ -162,31 +159,6 @@ public class MainController {
 			conect2.header.id = icommand.header.id;
 			conect2.header.length = icommand.header.length;
 			conect2.ReadFromBufferBody(data1);
-			System.out.print(conect2.body);
-		}
-	}
-	@Test
-	public void test2(){
-		ConnectCommand conect =new ConnectCommand();
-		
-		DataBuffer buffer =new DataBuffer();
-//		conect.WritheLength(buffer);
-		conect.WriteToBuffer(buffer,"Hello");
-		
-		byte[] b =buffer.readByte();//·Ö¸î
-		//-------------------------------
-		ICommand icommand =new ICommand();
-
-		DataBuffer buffer1 =new DataBuffer();
-		buffer1.getChars(b);
-		icommand.ReadBufferIp(buffer1);
-		System.out.println(icommand.header.id);
-		System.out.println(icommand.header.length);
-		if(icommand.header.id==CommandID.Connect){
-			ConnectCommand conect2 =new ConnectCommand();
-			conect2.header.id = icommand.header.id;
-			conect2.header.length = icommand.header.length;
-			conect2.ReadFromBufferBody(buffer1);
 			System.out.print(conect2.body);
 		}
 	}
@@ -212,4 +184,6 @@ public class MainController {
 		char[] c =data.getChars(bytes);
 		return data;
 	}
+	
+	
 }

@@ -76,8 +76,7 @@ public class MainIO {
 				//´«ÊäjsonÊý¾Ý
 				try {
 					DataBuffer data= createAgreeMentMessage(iCommand,str);
-					data.ReadChars();
-					Log.d("["+Thread.currentThread().getName()+"]="+str+","+data.getCharsLength());
+					Log.d("["+Thread.currentThread().getName()+"]="+data.getString());
 					os.write(data.readByte());
 					os.flush();
 					try {
@@ -101,8 +100,9 @@ public class MainIO {
 				try {
 					byte[] b = new byte[1024];
 					int len=is.read(b);
+					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
-					Log.d("["+Thread.currentThread().getName()+"]="+new String(data.buffer));
+					Log.d("["+Thread.currentThread().getName()+"]="+data.getString());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
