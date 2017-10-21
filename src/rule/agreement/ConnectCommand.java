@@ -8,7 +8,7 @@ import entity.agrement.ICommand;
 /// 连接协议
 public class ConnectCommand extends ICommand{
 	
-	public String body = "";
+	
 	public ConnectCommand(){
 		super(CommandID.Connect);
 	}

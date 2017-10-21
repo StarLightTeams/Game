@@ -19,6 +19,8 @@ import data.GameData;
 import entity.FactoryRooms.FactoryDoubleRoom;
 import entity.FactoryRooms.FactoryFourRoom;
 import entity.IO.MainIO;
+import entity.agrement.CommandID;
+import entity.agrement.ICommand;
 import entity.client.ClientData;
 import entity.client.ClientPortData;
 import entity.rooms.DoubleRoom;
@@ -91,8 +93,6 @@ public class MainController {
 				//用户登录
 				//将用户添加入房间
 				
-				
-				
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.d("客户端连接发生异常");
@@ -139,18 +139,77 @@ public class MainController {
 	@Test
 	public void test(){
 		ConnectCommand conect =new ConnectCommand();
+//		DataBuffer buffer =new DataBuffer();
+//		conect.WritheLength(buffer);
+//		conect.WriteToBuffer(buffer,"太多太多");
+		
+		DataBuffer data = createAgreeMentMessage(conect,"hello111");
+		
+		
+		byte[] b =data.readByte();//分割
+		//-------------------------------
+//		DataBuffer buffer1 =new DataBuffer();
+//		buffer1.getChars(b);
+//		conect.ReadFromBuffer(buffer1);
+		
+		DataBuffer data1 = getAgreeMentMessage(b);
+		ICommand icommand = new ICommand();
+		icommand.ReadBufferIp(data1);
+		System.out.println(icommand.header.id);
+		System.out.println(icommand.header.length);
+		if(icommand.header.id==CommandID.Connect){
+			ConnectCommand conect2 =new ConnectCommand();
+			conect2.header.id = icommand.header.id;
+			conect2.header.length = icommand.header.length;
+			conect2.ReadFromBufferBody(data1);
+			System.out.print(conect2.body);
+		}
+	}
+	@Test
+	public void test2(){
+		ConnectCommand conect =new ConnectCommand();
+		
 		DataBuffer buffer =new DataBuffer();
 //		conect.WritheLength(buffer);
-		conect.WriteToBuffer(buffer,"太多太多");
+		conect.WriteToBuffer(buffer,"Hello");
 		
 		byte[] b =buffer.readByte();//分割
 		//-------------------------------
+		ICommand icommand =new ICommand();
+
 		DataBuffer buffer1 =new DataBuffer();
 		buffer1.getChars(b);
-		conect.ReadFromBuffer(buffer1);
-		System.out.println(conect.header.id);
-		System.out.println(conect.header.length);
-		System.out.print(conect.body);
-//		System.out.println("111111111111");
+		icommand.ReadBufferIp(buffer1);
+		System.out.println(icommand.header.id);
+		System.out.println(icommand.header.length);
+		if(icommand.header.id==CommandID.Connect){
+			ConnectCommand conect2 =new ConnectCommand();
+			conect2.header.id = icommand.header.id;
+			conect2.header.length = icommand.header.length;
+			conect2.ReadFromBufferBody(buffer1);
+			System.out.print(conect2.body);
+		}
+	}
+	/**
+	 * 创建协议信息
+	 * @param iCommand
+	 * @param str
+	 * @return
+	 */
+	public DataBuffer createAgreeMentMessage(ICommand iCommand,String str){
+		DataBuffer data = new DataBuffer();
+		iCommand.WriteToBuffer(data,str);
+		return data;
+	}
+	
+	/**
+	 * 接受协议信息
+	 * @param bytes
+	 * @return
+	 */
+	public DataBuffer getAgreeMentMessage(byte[] bytes) {
+		DataBuffer data = new DataBuffer();
+		char[] c =data.getChars(bytes);
+		return data;
 	}
 }

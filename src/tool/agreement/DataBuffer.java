@@ -245,7 +245,6 @@ public class DataBuffer {
 	                 bb.flip ();
 	       CharBuffer cb = cs.decode (bb);
 	       buffer = cb.array();
-//	       System.out.println(new String(buffer));
 	   return cb.array();
 	}
 	public String getString(){

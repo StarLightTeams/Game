@@ -6,7 +6,7 @@ public class ICommand {
 
 	public CommandHeader header =new CommandHeader();
 	public int pos;
-	
+	public String body = "";
 	public ICommand(){
 		
 	}
@@ -32,12 +32,22 @@ public class ICommand {
 		buffer.WriteInt(length);
 		buffer.Seek(pos + length);
 	}
-
+	
 	public void ReadFromBuffer(DataBuffer buffer)
 	{
 //		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) \n");
 		header.length = buffer.ReadInt();
 		header.id = buffer.ReadInt();
+//		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) header.length = "+header.length+", header.id = "+ header.id);
+		ReadBody(buffer);
+	}
+	
+	public void ReadBufferIp(DataBuffer buffer){
+		header.length = buffer.ReadInt();
+		header.id = buffer.ReadInt();
+	}
+	public void ReadFromBufferBody(DataBuffer buffer)
+	{
 //		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) header.length = "+header.length+", header.id = "+ header.id);
 		ReadBody(buffer);
 	}
