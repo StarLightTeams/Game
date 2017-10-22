@@ -72,11 +72,12 @@ public class MainIO {
 			this.iCommand = iCommand;
 		}
 		public synchronized void run() {
-			while(true) {
+//			while(true) {
 				//´«ÊäjsonÊý¾Ý
 				try {
 					DataBuffer data= createAgreeMentMessage(iCommand,str);
 					Log.d("["+Thread.currentThread().getName()+"]="+data.getString());
+					
 					os.write(data.readByte());
 					os.flush();
 					try {
@@ -87,7 +88,7 @@ public class MainIO {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+//			}
 		}
 	}
 	
