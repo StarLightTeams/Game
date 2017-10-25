@@ -51,6 +51,11 @@ public class ICommand {
 //		System.out.println("ICommand::ReadFromBuffer(DataBuffer& buffer) header.length = "+header.length+", header.id = "+ header.id);
 		ReadBody(buffer);
 	}
-	public void WriteBody(DataBuffer buffer,String str){};
-	public void ReadBody(DataBuffer buffer){};
+	public void WriteBody(DataBuffer buffer,String str){
+		buffer.WriteString(str);
+		body = buffer.ReadString();
+	};
+	public void ReadBody(DataBuffer buffer){
+		body=buffer.ReadString();
+	};
 }

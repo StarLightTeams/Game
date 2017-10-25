@@ -1,14 +1,20 @@
 package main;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JFrame;
+
 import org.junit.Test;
 
 import rule.agreement.ConnectCommand;
+import thread.entity.view.ThreadViewer;
+import thread.entity.view.ViewThreads;
 import tool.ClientTools;
 import tool.CreateRoomTools;
 import tool.agreement.DataBuffer;
@@ -80,10 +86,17 @@ public class MainController {
 						// 得到当前客户端的接,发线程名
 						ClientTools.initClientThreadName(socket);
 						// 开启接收,发送线程
-						MainIO mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket());
+						MainIO mainIO = null;
+						if(g.mainiomap.containsKey(ip+":"+port)) {
+							mainIO = g.mainiomap.get(ip+":"+port);
+						}else {
+							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket());
+						}
 						mainIO.sendMessage(new ConnectCommand(), "太多太多");
-//						mainIO.receiveMessage();
-						g.mainiomap.put(ip + ":" + port, mainIO);
+						mainIO.receiveMessage();
+						if(!g.mainiomap.containsKey(ip+":"+port)) {
+							g.mainiomap.put(ip + ":" + port, mainIO);
+						}
 
 					} else {
 						Log.d("客户端:" + ip + ":" + port + "添加失败");

@@ -43,6 +43,7 @@ public class DataBuffer {
 	public char ReadChar() {
 //		System.out
 //				.println(" ReadChar() buffer[position] = " + (int)buffer[position]);
+		position=8;
 		return buffer[position++];
 	}
 

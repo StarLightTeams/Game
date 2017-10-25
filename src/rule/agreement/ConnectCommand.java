@@ -16,13 +16,12 @@ public class ConnectCommand extends ICommand{
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-	public void WriteBody(DataBuffer buffer,String str)
-	{
-		buffer.WriteString(str);
-	}
-	public void ReadBody(DataBuffer buffer)
-	{
+//	public void WriteBody(DataBuffer buffer,String str)
+//	{
+//		
+//	}
+//	public void ReadBody(DataBuffer buffer)
+//	{
 //		buffer.ReadChar();
-		body=buffer.ReadString();
-	}
+//	}
 }

@@ -11,11 +11,20 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Vector;
 
+import config.ClientConfig;
 import config.entity.Log;
+import data.GameData;
+import entity.agrement.CommandID;
 import entity.agrement.ICommand;
+import entity.player.Player;
+import rule.agreement.ConnectCommand;
+import rule.agreement.LoginCommand;
+import rule.agreement.LoginOutCommand;
 import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
 import tool.ClientTools;
+import tool.JsonTools;
+import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
 
 /**
@@ -76,8 +85,7 @@ public class MainIO {
 				//传输json数据
 				try {
 					DataBuffer data= createAgreeMentMessage(iCommand,str);
-					Log.d("["+Thread.currentThread().getName()+"]="+data.getString());
-					
+					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
 					os.write(data.readByte());
 					os.flush();
 					try {
@@ -99,11 +107,43 @@ public class MainIO {
 		public synchronized void run() {
 			while(true) {
 				try {
-					byte[] b = new byte[1024];
+					byte[] b = new byte[45056];
 					int len=is.read(b);
-					System.out.println("b="+new String(b));
+//					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
-					Log.d("["+Thread.currentThread().getName()+"]="+data.getString());
+					ICommand iCommand = AgreeMentTools.getICommand(data);
+					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
+					String dataInfo = new String(iCommand.body);
+					//判断是否是登录协议信息
+					int commandId = AgreeMentTools.judgeICommand(iCommand);
+//					System.out.println("commandId="+commandId);
+					if( commandId == CommandID.Login) {
+						Player player = (Player) JsonTools.parseJson(dataInfo);
+						String userName = player.getPlayerName();
+						String password = player.getPassword();
+						//进行登录验证
+						if(userName!=null && password!=null) {
+							if(userName.equals("admin")&&password.equals("admin")) {
+								//改变客户端的状态
+								ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.LOGININHALL);
+								//发送登录成功
+								sendMessage(new LoginCommand(), "登录成功");
+							}else {
+								//发送登录失败
+								sendMessage(new LoginCommand(),"登录失败");
+							}
+						}
+					}else if(commandId == CommandID.LoginOut) {
+						if(dataInfo.equals("退出登录")) {
+							ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.NOLOGIN);
+							//发送退出登录成功
+							sendMessage(new LoginOutCommand(),"退出成功");
+						}else {
+							//发送退出登录失败
+							sendMessage(new LoginOutCommand(),"退出失败");
+						}
+					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -133,6 +173,5 @@ public class MainIO {
 		data.getChars(bytes);
 		return data;
 	}
-	
 
 }

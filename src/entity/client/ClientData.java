@@ -14,7 +14,7 @@ public class ClientData {
 	private Socket clientSocket ;
 	//是否登录
 	private boolean islogin = false;
-	//客户端位置状态【0.未连接1.连接未登录2.登录在大厅3.房间为准备4.房间准备5.开始游戏6.游戏结束后结算画面】
+	//客户端位置状态【0.未连接1.连接未登录2.登录在大厅3.房间未准备4.房间准备5.开始游戏6.游戏结束后结算画面】
 	private int clientLocState = 0;
 	
 	public ClientData() {
@@ -27,6 +27,13 @@ public class ClientData {
 		this.clientSocket = clientSocket;
 	}
 
+	
+	public int getClientLocState() {
+		return clientLocState;
+	}
+	public void setClientLocState(int clientLocState) {
+		this.clientLocState = clientLocState;
+	}
 	public String getIp() {
 		return ip;
 	}

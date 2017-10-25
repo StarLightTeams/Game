@@ -1,15 +1,14 @@
 package rule.agreement;
 
-import tool.agreement.DataBuffer;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 
-public class LoginCommand extends ICommand{
+public class LoginOutCommand extends ICommand{
 	
-	public LoginCommand(){
-		super(CommandID.Login);
+	public LoginOutCommand(){
+		super(CommandID.LoginOut);
 	}
-	public LoginCommand(int id) {
+	public LoginOutCommand(int id) {
 		super(id);
 		// TODO Auto-generated constructor stub
 	}

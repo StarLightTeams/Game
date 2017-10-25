@@ -4,6 +4,11 @@ import config.entity.Log;
 
 public class ViewThreads {
 	public static void main(String[] args) {
+		
+				test();
+	}
+	
+	public static void test() {
 		ThreadGroup group = 
 				Thread.currentThread().getThreadGroup();
 				ThreadGroup topGroup = group;
