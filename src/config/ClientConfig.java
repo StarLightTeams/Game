@@ -17,4 +17,10 @@ public class ClientConfig {
 	//结束游戏
 	public static final int GAMEEND = 6;
 	
+	//玩家登录类型(0游客  1QQ 2微信)
+	public static final int weChat = 2;
+	public static final int QQ = 1;
+	public static final int Guest = 0;
+
+	
 }

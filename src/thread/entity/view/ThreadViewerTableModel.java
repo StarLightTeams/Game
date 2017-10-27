@@ -1,10 +1,14 @@
 package thread.entity.view;
 
 import java.awt.*;  
-import java.lang.reflect.*;  
+import java.lang.reflect.*;
+import java.util.ArrayList;
+
 import javax.swing.*;  
 import javax.swing.table.*;  
+
 public class ThreadViewerTableModel extends AbstractTableModel {  
+	
     private Object dataLock;   
     private int rowCount;  
     private Object[][] cellData;  
@@ -21,9 +25,9 @@ public class ThreadViewerTableModel extends AbstractTableModel {
         cellData = new Object[0][0];  
         // JTable uses this information for the column headers  
         String[] names = {   
-            "Priority", "Alive",   
-            "Daemon", "Interrupted",   
-            "ThreadGroup", "Thread Name" };  
+            "优先级", "存活",   
+            "守护", "中断",   
+            "线程组", "线程名(服务端线程名:ip+:+port+:1r/s)" };  
         columnName = names;                           
                           
         // JTable uses this information for cell rendering  
@@ -145,7 +149,13 @@ public class ThreadViewerTableModel extends AbstractTableModel {
         int actualSize = topGroup.enumerate(slackList);  
         // copy into a list that is the exact size  
         Thread[] list = new Thread[actualSize];  
-        System.arraycopy(slackList, 0, list, 0, actualSize);  
-        return list;  
+        System.arraycopy(slackList, 0, list, 0, actualSize);
+        ArrayList<Thread> list2 = new ArrayList<Thread>();
+        for(Thread t:list) {
+        	if(("main").equals(t.getThreadGroup().getName())) {
+        		list2.add(t);
+        	}
+        }
+        return list2.toArray(new Thread[list2.size()]);  
     }  
 }        

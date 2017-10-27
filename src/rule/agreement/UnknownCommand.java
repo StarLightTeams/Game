@@ -14,12 +14,12 @@ public class UnknownCommand extends ICommand{
 		// TODO Auto-generated constructor stub
 		
 	}
-	public void WriteBody(DataBuffer buffer)
-	{
-	}
-
-	public void ReadBody(DataBuffer buffer)
-	{
-	}
+//	public void WriteBody(DataBuffer buffer)
+//	{
+//	}
+//
+//	public void ReadBody(DataBuffer buffer)
+//	{
+//	}
 	
 }

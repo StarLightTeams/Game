@@ -11,6 +11,7 @@ import rule.agreement.GuestLoginCommand;
 import rule.agreement.HeartCommand;
 import rule.agreement.LoginCommand;
 import rule.agreement.LoginOutCommand;
+import rule.agreement.RegisterCommand;
 import rule.agreement.UnknownCommand;
 
 /**
@@ -31,8 +32,10 @@ public class AgreeMentTools {
 			return new LoginCommand(id);
 		}else if(id == CommandID.Unknown){//未知数据协议
 			return new UnknownCommand(id);
-		}else if(id == CommandID.LoginOut) {
+		}else if(id == CommandID.LoginOut) {//退出登录协议
 			return new LoginOutCommand(id);
+		}else if(id == CommandID.Register){//注册协议
+			return new RegisterCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -51,13 +54,15 @@ public class AgreeMentTools {
 			return CommandID.Heart;
 		}else if(iCommand.getClass().equals(LoginCommand.class)) {//登录协议
 			return CommandID.Login;
-		}else if(iCommand.getClass().equals(LoginOutCommand.class)) {
+		}else if(iCommand.getClass().equals(LoginOutCommand.class)) {//退出登录协议
 			return CommandID.LoginOut;
 		}else if(iCommand.getClass().equals(UnknownCommand.class)){//未知数据协议
 			return CommandID.Unknown;
+		}else if(iCommand.getClass().equals(RegisterCommand.class)){//注册协议
+			return CommandID.Register;
 		}else {
 			//返回错误协议数据
-			return 0;
+			return -1;
 		}
 	}
 	

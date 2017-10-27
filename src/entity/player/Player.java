@@ -10,17 +10,21 @@ public class Player {
 	public int playerNo;
 	//Íæ¼ÒÃû×Ö
 	public String playerName;
-	//Íæ¼ÒµÇÂ½ÃÜÂë
-	public String password;
+	//Íæ¼ÒµÇÂ½ÃÜÂë(ÓÎ¿ÍÃÜÂëÄ¬ÈÏÎª1)
+	public String password = "1";
 	//Íæ¼Ò·¿¿¨
 	public int playerCard;
 	//Íæ¼ÒµÀ¾ß
 	public Map<String,Integer> djmap;
-	//Íæ¼Ò×´Ì¬¡¾¡¿
-	
+	//Íæ¼ÒµÇÂ¼×´Ì¬¡¾0.Î´µÇÂ¼ 1.ÓÎ¿ÍµÇÂ¼ 2.qqµÇÂ¼ 3.Î¢ĞÅµÇÂ¼¡¿
+	public int loginState = 0;
 	
 	public Player() {
 		
+	}
+	
+	public Player(String playerName) {
+		this.playerName = playerName;
 	}
 	
 	public Player(String playerName ,String password) {
@@ -28,7 +32,20 @@ public class Player {
 		this.password = password;
 	}
 	
+	public Player(String playerName,String password,int loginState) {
+		this.playerName = playerName;
+		this.password = password;
+		this.loginState =loginState;
+	}
 	
+	public int getLoginState() {
+		return loginState;
+	}
+
+	public void setLoginState(int loginState) {
+		this.loginState = loginState;
+	}
+
 	public int getPlayerNo() {
 		return playerNo;
 	}
@@ -59,11 +76,11 @@ public class Player {
 	public void setDjmap(Map<String, Integer> djmap) {
 		this.djmap = djmap;
 	}
+
 	@Override
 	public String toString() {
 		return "Player [playerNo=" + playerNo + ", playerName=" + playerName + ", password=" + password
-				+ ", playerCard=" + playerCard + ", djmap=" + djmap + "]";
+				+ ", playerCard=" + playerCard + ", djmap=" + djmap + ", loginState=" + loginState + "]";
 	}
-	
 }
 

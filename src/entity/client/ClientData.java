@@ -2,6 +2,9 @@ package entity.client;
 
 import java.net.Socket;
 
+import entity.player.Player;
+import tool.ClientTools;
+
 /**
  * 客户端信息类
  */
@@ -16,6 +19,8 @@ public class ClientData {
 	private boolean islogin = false;
 	//客户端位置状态【0.未连接1.连接未登录2.登录在大厅3.房间未准备4.房间准备5.开始游戏6.游戏结束后结算画面】
 	private int clientLocState = 0;
+	//玩家
+	public Player player;
 	
 	public ClientData() {
 		
@@ -26,8 +31,17 @@ public class ClientData {
 		this.port = clientSocket.getPort();
 		this.clientSocket = clientSocket;
 	}
-
 	
+	
+	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
 	public int getClientLocState() {
 		return clientLocState;
 	}
@@ -65,6 +79,4 @@ public class ClientData {
 	public void setIslogin(boolean islogin) {
 		this.islogin = islogin;
 	}
-
-	
 }

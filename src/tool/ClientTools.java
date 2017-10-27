@@ -1,11 +1,15 @@
 package tool;
 
 import java.net.Socket;
+import java.util.Random;
+
+import org.junit.Test;
 
 import config.ClientConfig;
 import config.GameConfig;
 import data.GameData;
 import entity.client.ClientData;
+import entity.player.Player;
 
 /**
  * 客户端方法
@@ -53,8 +57,62 @@ public class ClientTools {
 		return str[0]+":"+str[1];
 	}
 	
+	/**
+	 * 设置客户端的状态
+	 * @param ThreadName
+	 * @param state
+	 */
 	public static void setClientLocState(String ThreadName,int state) {
 		String key = ClientTools.getKeyByThreadName(ThreadName);
 		GameData.getSingleton().clientmap.get(key).setClientLocState(ClientConfig.LOGININHALL);
+	}
+	
+	/**
+	 * 设置客户端玩家
+	 * @param ThreadName
+	 * @param player
+	 */
+	public static void setClientPlayer(String ThreadName,Player player) {
+		String key = ClientTools.getKeyByThreadName(ThreadName);
+		GameData.getSingleton().clientmap.get(key).setPlayer(player);
+	}
+	
+	/**
+	 * 获得游客名字
+	 */
+	public static String getGuestPeopleName() {
+		//字母数组(包含a~z的字母和数字)
+		char[] str = new char [26*2+10];
+		for(int i=0;i<26;i++) {
+			str[i] = (char)(65+i);
+		}
+		for(int i=0;i<26;i++) {
+			str[26+i] = (char)(97+i);
+		}
+		for(int i=0;i<10;i++) {
+			str[52+i] = (i+"").charAt(0);
+		}
+//		for(char s :str) {
+//			System.out.println(s);
+//		}
+		Random rand = new Random();
+		char[] name = new char[8];
+		String GuestName;
+//		while(true){
+			int t;
+			for(int i=0;i<8;i++) {
+				t=rand.nextInt(62);
+				name[i] =str[t]; 
+			}
+			GuestName = new String(name);
+			//判断这个是否在数据库中存在,待完善
+//			break;
+//		}
+		return GuestName;
+	}
+	
+	@Test
+	public void test() {
+		System.out.println(getGuestPeopleName());
 	}
 }

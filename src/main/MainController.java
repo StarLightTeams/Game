@@ -13,8 +13,8 @@ import javax.swing.JFrame;
 import org.junit.Test;
 
 import rule.agreement.ConnectCommand;
+import rule.agreement.GuestLoginCommand;
 import thread.entity.view.ThreadViewer;
-import thread.entity.view.ViewThreads;
 import tool.ClientTools;
 import tool.CreateRoomTools;
 import tool.agreement.DataBuffer;
@@ -90,7 +90,7 @@ public class MainController {
 						if(g.mainiomap.containsKey(ip+":"+port)) {
 							mainIO = g.mainiomap.get(ip+":"+port);
 						}else {
-							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket());
+							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket(),singleExecutor);
 						}
 						mainIO.sendMessage(new ConnectCommand(), "太多太多");
 						mainIO.receiveMessage();
@@ -140,6 +140,29 @@ public class MainController {
 	}
 
 	public static void main(String[] args) {
+		//打开查看线程
+		new Thread(new Runnable() {
+			public void run() {
+				 JFrame f = ThreadViewer.createFramedInstance();  
+			        // For this example, exit the VM when the viewer  
+			        // frame is closed.  
+			        f.addWindowListener(new WindowAdapter() {  
+			                public void windowClosing(WindowEvent e) {  
+			                    System.exit(0);  
+			                }  
+			            });  
+			        // Keep the main thread from exiting by blocking  
+			        // on wait() for a notification that never comes.  
+			        Object lock = new Object();  
+			        synchronized ( lock ) {  
+			            try {  
+			                lock.wait();  
+			            } catch ( InterruptedException x ) {  
+			            }  
+			        }  
+			}
+		}).start();
+		//服务器
 		MainController controller = new MainController();
 		try {
 			if (controller.startserver()) {

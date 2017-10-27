@@ -13,11 +13,11 @@ public class HeartCommand extends ICommand{
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-	public void WriteBody(DataBuffer buffer)
-	{
-	}
-
-	public void ReadBody(DataBuffer buffer)
-	{
-	}
+//	public void WriteBody(DataBuffer buffer)
+//	{
+//	}
+//
+//	public void ReadBody(DataBuffer buffer)
+//	{
+//	}
 }
