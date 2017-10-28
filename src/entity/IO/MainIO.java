@@ -21,6 +21,7 @@ import entity.player.Player;
 import main.TimeServerHandlerExecute;
 import rule.agreement.ConnectCommand;
 import rule.agreement.GuestLoginCommand;
+import rule.agreement.HeartCommand;
 import rule.agreement.LoginCommand;
 import rule.agreement.LoginOutCommand;
 import rule.agreement.RegisterCommand;
@@ -39,9 +40,15 @@ public class MainIO {
 	public Socket clientSocket;
 	public Thread send;
 	public Thread receive;
+	public Thread heart_thread;
 	public OutputStream os;
 	public InputStream is;
 	public TimeServerHandlerExecute singleExecutor;
+	//发送心跳协议的时间
+	public int time_tocount = 10;
+	//心跳跳动-结束时间(超过时间没有发过包，则说明客户端断开)
+	public final int MAX_TIME_END_COUNT =30;
+	public int timecount=0;
 	
 	public MainIO(Socket clientSocket,TimeServerHandlerExecute singleExecutor) {
 		this.clientSocket = clientSocket;
@@ -140,6 +147,8 @@ public class MainIO {
 					String dataInfo = new String(iCommand.body);
 					//判断是否是登录协议信息
 					int commandId = AgreeMentTools.judgeICommand(iCommand);
+					//刷新心跳线程
+					resetHeart();
 //					System.out.println("commandId="+commandId);
 					if( commandId == CommandID.Login) { //登录协议
 						Player player = (Player) JsonTools.parseJson(dataInfo);
@@ -233,5 +242,45 @@ public class MainIO {
 		data.getChars(bytes);
 		return data;
 	}
-
+	public void startHeartThread(){
+		singleExecutor.excute(new HeartThread());
+	}
+	/*
+	 * 刷新心跳线程
+	 */
+	public void resetHeart()
+	{
+		time_tocount = 10;
+		timecount = 0;
+	}
+	/*
+	 * 心跳线程
+	 */
+	public class HeartThread implements Runnable{
+		
+		
+		public void run() {
+			// TODO Auto-generated method stub
+			while(true){
+				
+				time_tocount --;
+				if(time_tocount<=0){
+					time_tocount = 10;
+					sendMessage(new HeartCommand(), "");
+				}
+				timecount ++;
+				if(timecount >= MAX_TIME_END_COUNT){
+					//移除客户机
+					
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
 }

@@ -92,6 +92,8 @@ public class MainController {
 						}else {
 							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket(),singleExecutor);
 						}
+						//开启心跳线程
+						mainIO.startHeartThread();
 						mainIO.sendMessage(new ConnectCommand(), "太多太多");
 						mainIO.receiveMessage();
 						if(!g.mainiomap.containsKey(ip+":"+port)) {
