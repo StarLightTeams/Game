@@ -108,7 +108,7 @@ public class ClientTools {
 			//判断这个是否在数据库中存在,待完善
 //			break;
 //		}
-		return GuestName;
+ 		return GuestName;
 	}
 	
 	@Test
