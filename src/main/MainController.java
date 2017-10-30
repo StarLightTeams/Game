@@ -17,6 +17,7 @@ import rule.agreement.GuestLoginCommand;
 import thread.entity.view.ThreadViewer;
 import tool.ClientTools;
 import tool.CreateRoomTools;
+import tool.JsonTools;
 import tool.agreement.DataBuffer;
 import config.GameConfig;
 import config.ServerConfig;
@@ -29,6 +30,7 @@ import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.client.ClientData;
 import entity.client.ClientPortData;
+import entity.info.Info;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
@@ -94,7 +96,7 @@ public class MainController {
 						}
 						//开启心跳线程
 						mainIO.startHeartThread();
-						mainIO.sendMessage(new ConnectCommand(), "太多太多");
+						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("太多太多")));
 						mainIO.receiveMessage();
 						if(!g.mainiomap.containsKey(ip+":"+port)) {
 							g.mainiomap.put(ip + ":" + port, mainIO);

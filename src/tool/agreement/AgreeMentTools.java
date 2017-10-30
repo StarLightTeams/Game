@@ -1,12 +1,12 @@
 package tool.agreement;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 
 import org.junit.Test;
 
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import rule.agreement.ConnectCommand;
+import rule.agreement.GeneralInformationCommand;
 import rule.agreement.GuestLoginCommand;
 import rule.agreement.HeartCommand;
 import rule.agreement.LoginCommand;
@@ -36,6 +36,8 @@ public class AgreeMentTools {
 			return new LoginOutCommand(id);
 		}else if(id == CommandID.Register){//注册协议
 			return new RegisterCommand(id);
+		}else if(id == CommandID.GeneralInformation) {//普通信息协议
+			return new GeneralInformationCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -60,6 +62,8 @@ public class AgreeMentTools {
 			return CommandID.Unknown;
 		}else if(iCommand.getClass().equals(RegisterCommand.class)){//注册协议
 			return CommandID.Register;
+		}else if(iCommand.getClass().equals(GeneralInformationCommand.class)) {//普通信息协议
+			return CommandID.GeneralInformation;
 		}else {
 			//返回错误协议数据
 			return -1;

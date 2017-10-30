@@ -11,14 +11,19 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Vector;
 
+import org.junit.Test;
+
 import config.ClientConfig;
+import config.ServerConfig;
 import config.entity.Log;
 import data.GameData;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.client.ClientData;
+import entity.info.Info;
 import entity.player.Player;
 import main.TimeServerHandlerExecute;
+import module.DbOperator;
 import rule.agreement.ConnectCommand;
 import rule.agreement.GuestLoginCommand;
 import rule.agreement.HeartCommand;
@@ -28,6 +33,7 @@ import rule.agreement.RegisterCommand;
 import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
 import tool.ClientTools;
+import tool.DataBaseTools;
 import tool.JsonTools;
 import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
@@ -49,10 +55,12 @@ public class MainIO {
 	//心跳跳动-结束时间(超过时间没有发过包，则说明客户端断开)
 	public final int MAX_TIME_END_COUNT =30;
 	public int timecount=0;
+	public DbOperator dbOperator;
 	
 	public MainIO(Socket clientSocket,TimeServerHandlerExecute singleExecutor) {
 		this.clientSocket = clientSocket;
 		this.singleExecutor = singleExecutor;
+		dbOperator = new DbOperator(new DataBaseTools());
 		try {
 			is = clientSocket.getInputStream();
 			os = clientSocket.getOutputStream();
@@ -157,40 +165,43 @@ public class MainIO {
 						int loginState = player.getLoginState();
 						//进行登录验证
 						if(userName!=null && password!=null) {
-							//改变客户端的状态
-							ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.LOGININHALL);
-							//判断用户登录,改变用户状态
-							switch(loginState) {
-							case ClientConfig.Guest:
-								player.setLoginState(ClientConfig.Guest);
-								break;
-							case ClientConfig.QQ:
-								player.setLoginState(ClientConfig.QQ);
-								break;
-							case ClientConfig.weChat:
-								player.setLoginState(ClientConfig.weChat);
-								break;
-							}
-							//从数据库中判断是否符合,需要完善
-							if(userName.equals("admin")&&password.equals("admin")) {
-								//把玩家信息放入数据库,有待完善
+							if(dbOperator.judgePeopleLogin(userName, password, loginState)) {
+								//在数据库中找到这个用户
+								//改变客户端的状态
+								ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.LOGININHALL);
+								//判断用户登录,改变用户状态
+								switch(loginState) {
+								case ClientConfig.Guest:
+									player.setLoginState(ClientConfig.Guest);
+									break;
+								case ClientConfig.QQ:
+									player.setLoginState(ClientConfig.QQ);
+									break;
+								case ClientConfig.weChat:
+									player.setLoginState(ClientConfig.weChat);
+									break;
+								case ClientConfig.login:
+									player.setLoginState(ClientConfig.login);
+									break;
+								}
 								//把player放入ClientData
 								ClientTools.setClientPlayer(Thread.currentThread().getName(), player);
 								//发送登录成功
-								sendMessage(new LoginCommand(), "登录成功");
+								sendMessage(new LoginCommand(), JsonTools.getString(new Info("登录成功")));
 							}else {
+								//此用户不存在
 								//发送登录失败
-								sendMessage(new LoginCommand(),"登录失败");
+								sendMessage(new LoginCommand(),JsonTools.getString(new Info("登录失败")));
 							}
 						}
 					}else if(commandId == CommandID.LoginOut) {//退出登录协议
 						if(dataInfo.equals("退出登录")) {
 							ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.NOLOGIN);
 							//发送退出登录成功
-							sendMessage(new LoginOutCommand(),"退出成功");
+							sendMessage(new LoginOutCommand(),JsonTools.getString(new Info("退出成功")));
 						}else {
 							//发送退出登录失败
-							sendMessage(new LoginOutCommand(),"退出失败");
+							sendMessage(new LoginOutCommand(),JsonTools.getString(new Info("退出失败")));
 						}
 					}else if(commandId == CommandID.Register) {//注册协议
 						Player player = (Player) JsonTools.parseJson(dataInfo);
@@ -198,19 +209,26 @@ public class MainIO {
 							String password = player.getPassword();
 							//进行注册验证
 							if(userName!=null && password!=null) {
-								//在数据库中进行判断是否有重复,待完善
-//								if(true) {
-									sendMessage(new RegisterCommand(), "注册成功");
-//								}else {
-//									sendMessage(new RegisterCommand(),"注册失败");
-//								}
+								//在数据库中进行判断是否有重复
+								if(!dbOperator.judgePeopleNameExist(userName)) {
+									//没有重复,添加入数据库
+									if(dbOperator.insertNewPlayer(userName, password, 4,MainIO.this)) {
+										sendMessage(new RegisterCommand(), JsonTools.getString(new Info("注册成功")));
+									}else{
+										sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","添加入数据库失败")));
+									}
+								}else {
+									String str = JsonTools.getString(new Info("注册失败","重名"));
+									sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","重名")));
+								}
 							}
 					}else if(commandId == CommandID.GuestLogin) {
 						String GuestName =ClientTools.getGuestPeopleName();
 						System.out.println("GuestName="+GuestName+"111111");
-						//保存到数据库(待完善)
+						//保存到数据库
+						dbOperator.insertNewPlayer(GuestName, "1", ClientConfig.Guest, MainIO.this);
 						//给客户端发送游客用户
-						sendMessage(new GuestLoginCommand(), GuestName);
+						sendMessage(new GuestLoginCommand(), JsonTools.getString(new Info("GuestName",GuestName)));
 					}
 					
 				} catch (IOException e) {
@@ -262,7 +280,6 @@ public class MainIO {
 		public void run() {
 			// TODO Auto-generated method stub
 			while(true){
-				
 				time_tocount --;
 				if(time_tocount<=0){
 					time_tocount = 10;
@@ -282,5 +299,13 @@ public class MainIO {
 			}
 		}
 		
+	}
+	
+	@Test
+	public void test() {
+		resetHeart();
+		System.out.println("time_tocount="+time_tocount);
+		System.out.println("timecount="+timecount);
+		new Thread(new HeartThread()).start();
 	}
 }

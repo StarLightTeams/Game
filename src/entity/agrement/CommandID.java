@@ -9,5 +9,6 @@ public class CommandID {
 	public final static int Login = 0x0004;//用户登录
 	public final static int LoginOut = 0x0005;//用户退出
 	public final static int Register = 0x0006;//用户注册
+	public final static int GeneralInformation = 0x0007;//普通信息
 	
 }

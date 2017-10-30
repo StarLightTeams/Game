@@ -17,6 +17,11 @@ import config.entity.Log;
 
 public class DataBaseTools {
 	
+	/**
+	 * 获取连接
+	 * @param fileName
+	 * @return
+	 */
 	public Connection getConectDataBase(String fileName) {
 		Connection conn = null;
 		try {
@@ -39,17 +44,30 @@ public class DataBaseTools {
 		return null;
 	}
 	
-	//关闭连接
-	public static void closeCon(Connection con){
+	/**
+	 *	关闭连接
+	 * @param con
+	 */
+	public void closeCon(Connection con){
 		if(con!=null){
 			try {
 				con.close();
+				Log.d("数据库关闭");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	public void rollBack(Connection con) {
+		try {
+			con.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@Test
 	public void test() {

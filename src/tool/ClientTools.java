@@ -10,6 +10,7 @@ import config.GameConfig;
 import data.GameData;
 import entity.client.ClientData;
 import entity.player.Player;
+import module.DbOperator;
 
 /**
  * 客户端方法
@@ -92,22 +93,18 @@ public class ClientTools {
 		for(int i=0;i<10;i++) {
 			str[52+i] = (i+"").charAt(0);
 		}
-//		for(char s :str) {
-//			System.out.println(s);
-//		}
+		DbOperator dbOperator = new DbOperator(new DataBaseTools());
 		Random rand = new Random();
 		char[] name = new char[8];
 		String GuestName;
-//		while(true){
+		do {
 			int t;
 			for(int i=0;i<8;i++) {
 				t=rand.nextInt(62);
 				name[i] =str[t]; 
 			}
 			GuestName = new String(name);
-			//判断这个是否在数据库中存在,待完善
-//			break;
-//		}
+		}while(dbOperator.judgePeopleNameExist(GuestName));
  		return GuestName;
 	}
 	

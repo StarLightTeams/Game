@@ -2,6 +2,7 @@ package tool;
 
 import org.junit.Test;
 
+import entity.info.Info;
 import entity.player.Player;
 import net.sf.json.JSONObject;
 
@@ -26,7 +27,13 @@ public class JsonTools {
 			Player player = new Player();
 			player.setPlayerName(jObject.getJSONObject("data").getString("playerName"));
 			player.setPassword(jObject.getJSONObject("data").getString("password"));
+			player.setLoginState(Integer.parseInt(jObject.getJSONObject("data").getString("loginState")));
 			return player;
+		}else if("Info".equals(className)){
+			Info info = new Info();
+			info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
+			info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
+			return info;
 		}else {
 			
 			return null;
