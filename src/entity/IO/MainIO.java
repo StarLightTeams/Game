@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Map;
 import java.util.Vector;
+
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import org.junit.Test;
 
@@ -22,9 +25,11 @@ import entity.agrement.ICommand;
 import entity.client.ClientData;
 import entity.info.Info;
 import entity.player.Player;
+import entity.rooms.Room;
 import main.TimeServerHandlerExecute;
 import module.DbOperator;
 import rule.agreement.ConnectCommand;
+import rule.agreement.GameStartCommand;
 import rule.agreement.GuestLoginCommand;
 import rule.agreement.HeartCommand;
 import rule.agreement.LoginCommand;
@@ -34,7 +39,9 @@ import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
 import tool.ClientTools;
 import tool.DataBaseTools;
+import tool.GameTools;
 import tool.JsonTools;
+import tool.RoomTools;
 import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
 
@@ -57,6 +64,8 @@ public class MainIO {
 	public int timecount=0;
 	public DbOperator dbOperator;
 	
+	public GameTools gameTools;
+	
 	public MainIO(Socket clientSocket,TimeServerHandlerExecute singleExecutor) {
 		this.clientSocket = clientSocket;
 		this.singleExecutor = singleExecutor;
@@ -73,7 +82,7 @@ public class MainIO {
 	 * 发送信息
 	 * @param str
 	 */
-	public void sendMessage(ICommand iCommand,String str) {
+	public synchronized void sendMessage(ICommand iCommand,String str) {
 //		send = new FactoryThread().newThread(new sendThread(iCommand,str),ClientTools.clientThreadSName);
 //		send.setUncaughtExceptionHandler(new ThreadException());
 //		send.start();
@@ -83,7 +92,7 @@ public class MainIO {
 	/**
 	 * 接受信息
 	 */
-	public void receiveMessage() {
+	public synchronized void receiveMessage() {
 //		receive = new FactoryThread().newThread(new receiveThread(),ClientTools.clientThreadRName);
 //		receive.setUncaughtExceptionHandler(new ThreadException());
 //		receive.start();
@@ -153,22 +162,25 @@ public class MainIO {
 					ICommand iCommand = AgreeMentTools.getICommand(data);
 					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
 					String dataInfo = new String(iCommand.body);
-					//判断是否是登录协议信息
 					int commandId = AgreeMentTools.judgeICommand(iCommand);
 					//刷新心跳线程
-					resetHeart();
+//					resetHeart();
 //					System.out.println("commandId="+commandId);
+					//判断是否是登录协议信息
 					if( commandId == CommandID.Login) { //登录协议
 						Player player = (Player) JsonTools.parseJson(dataInfo);
 						String userName = player.getPlayerName();
 						String password = player.getPassword();
 						int loginState = player.getLoginState();
+						String clientId = player.getClientId();
+						Log.d("clientId="+clientId);
 						//进行登录验证
 						if(userName!=null && password!=null) {
 							if(dbOperator.judgePeopleLogin(userName, password, loginState)) {
 								//在数据库中找到这个用户
 								//改变客户端的状态
 								ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.LOGININHALL);
+								ClientTools.setLoginState(Thread.currentThread().getName(), true);
 								//判断用户登录,改变用户状态
 								switch(loginState) {
 								case ClientConfig.Guest:
@@ -184,8 +196,10 @@ public class MainIO {
 									player.setLoginState(ClientConfig.login);
 									break;
 								}
+								Log.d(player.toString());
 								//把player放入ClientData
 								ClientTools.setClientPlayer(Thread.currentThread().getName(), player);
+								Log.d(clientSocket.toString());
 								//发送登录成功
 								sendMessage(new LoginCommand(), JsonTools.getString(new Info("登录成功")));
 							}else {
@@ -205,32 +219,47 @@ public class MainIO {
 						}
 					}else if(commandId == CommandID.Register) {//注册协议
 						Player player = (Player) JsonTools.parseJson(dataInfo);
-							String userName = player.getPlayerName();
-							String password = player.getPassword();
-							//进行注册验证
-							if(userName!=null && password!=null) {
-								//在数据库中进行判断是否有重复
-								if(!dbOperator.judgePeopleNameExist(userName)) {
-									//没有重复,添加入数据库
-									if(dbOperator.insertNewPlayer(userName, password, 4,MainIO.this)) {
-										sendMessage(new RegisterCommand(), JsonTools.getString(new Info("注册成功")));
-									}else{
-										sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","添加入数据库失败")));
-									}
-								}else {
-									String str = JsonTools.getString(new Info("注册失败","重名"));
-									sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","重名")));
+						String userName = player.getPlayerName();
+						String password = player.getPassword();
+						//进行注册验证
+						if(userName!=null && password!=null) {
+							//在数据库中进行判断是否有重复
+							if(!dbOperator.judgePeopleNameExist(userName)) {
+								//没有重复,添加入数据库
+								if(dbOperator.insertNewPlayer(userName, password, 4,MainIO.this)) {
+									sendMessage(new RegisterCommand(), JsonTools.getString(new Info("注册成功")));
+								}else{
+									sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","添加入数据库失败")));
 								}
+							}else {
+								String str = JsonTools.getString(new Info("注册失败","重名"));
+								sendMessage(new RegisterCommand(),JsonTools.getString(new Info("注册失败","重名")));
 							}
-					}else if(commandId == CommandID.GuestLogin) {
+						}
+					}else if(commandId == CommandID.GuestLogin) {//游客登录协议
 						String GuestName =ClientTools.getGuestPeopleName();
-						System.out.println("GuestName="+GuestName+"111111");
 						//保存到数据库
 						dbOperator.insertNewPlayer(GuestName, "1", ClientConfig.Guest, MainIO.this);
 						//给客户端发送游客用户
 						sendMessage(new GuestLoginCommand(), JsonTools.getString(new Info("GuestName",GuestName)));
+					}else if(commandId == CommandID.GamePreparing) {//游戏准备
+						gameTools = new GameTools(GameData.getSingleton());
+						Info info =(Info) JsonTools.parseJson(dataInfo);
+						gameTools.gamePreparing(info.dataInfo,MainIO.this,singleExecutor);
+					}else if(commandId == CommandID.GameLoading) {//游戏加载
+						Info info =(Info) JsonTools.parseJson(dataInfo);
+						Map<String, String> maps = JsonTools.parseData(info.dataInfo);
+						String roomType = maps.get("roomType");
+						String roomId = maps.get("roomId");
+						Log.d("roomId="+roomId+",roomType="+roomType);
+						//获得玩家的房间
+						Room room = GameData.getSingleton().roommap.get(roomType).get(roomId);
+						room.roomInfo.endOfLoadingGame++;
+						System.out.println("num="+room.roomInfo.endOfLoadingGame);
+						if(room.roomInfo.endOfLoadingGame == RoomTools.getRoomPeopleNumByRoomType(roomType)) {
+							new GameTools().sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
+						}
 					}
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -283,7 +312,7 @@ public class MainIO {
 				time_tocount --;
 				if(time_tocount<=0){
 					time_tocount = 10;
-					sendMessage(new HeartCommand(), "");
+					sendMessage(new HeartCommand(), JsonTools.getString(new Info("")));
 				}
 				timecount ++;
 				if(timecount >= MAX_TIME_END_COUNT){

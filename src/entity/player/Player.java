@@ -6,6 +6,8 @@ import java.util.Map;
  * 玩家类
  */
 public class Player {
+	//玩家的ip+:+port
+	public String clientId;
 	//玩家序号
 	public int playerNo;
 	//玩家名字
@@ -16,8 +18,10 @@ public class Player {
 	public int playerCard;
 	//玩家道具
 	public Map<String,Integer> djmap;
-	//玩家登录状态【0.未登录 1.游客登录 2.qq登录 3.微信登录】
+	//玩家登录状态【 0.游客登录1.qq登录 2.微信登录 4登录】
 	public int loginState = 0;
+	//游戏状态[0未进行游戏 1.等待游戏2.正在游戏3.结束游戏]
+	public int gamestate =0;
 	
 	public Player() {
 		
@@ -27,17 +31,37 @@ public class Player {
 		this.playerName = playerName;
 	}
 	
-	public Player(String playerName ,String password) {
+	public Player(String playerName ,String password,String clientId) {
 		this.playerName = playerName;
 		this.password = password;
+		this.clientId = clientId;
 	}
 	
-	public Player(String playerName,String password,int loginState) {
+	public Player(String playerName,String password,int loginState,String clientId) {
 		this.playerName = playerName;
 		this.password = password;
 		this.loginState =loginState;
+		this.clientId = clientId;
 	}
 	
+	
+	
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public int getGamestate() {
+		return gamestate;
+	}
+
+	public void setGamestate(int gamestate) {
+		this.gamestate = gamestate;
+	}
+
 	public int getLoginState() {
 		return loginState;
 	}
@@ -79,8 +103,9 @@ public class Player {
 
 	@Override
 	public String toString() {
-		return "Player [playerNo=" + playerNo + ", playerName=" + playerName + ", password=" + password
-				+ ", playerCard=" + playerCard + ", djmap=" + djmap + ", loginState=" + loginState + "]";
+		return "Player [clientId=" + clientId + ", playerNo=" + playerNo + ", playerName=" + playerName + ", password="
+				+ password + ", playerCard=" + playerCard + ", djmap=" + djmap + ", loginState=" + loginState
+				+ ", gamestate=" + gamestate + "]";
 	}
 }
 

@@ -18,4 +18,12 @@ public class GameConfig {
 	public static int doubleRoomCount=10;
 	//四人普通房间数
 	public static int fourRoomCount = 10;
+	
+	//游戏类型
+	public static int doubleCommonGame = 0;
+	public static int doubleSpecialGame = 1;
+	public static int fourCommonGame = 2;
+	public static int fourSpecialGame = 3;
+	
+	
 }

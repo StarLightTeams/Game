@@ -22,6 +22,12 @@ public class ClientConfig {
 	public static final int weChat = 2;
 	public static final int QQ = 1;
 	public static final int Guest = 0;
+	
+	//玩家游戏类型(0未进行游戏 1.等待游戏2.正在游戏3.结束游戏)
+	public static final int noGame = 0;
+	public static final int waitGame = 1;
+	public static final int gaming =2;
+	public static final int endGame = 3;
 
 	
 }

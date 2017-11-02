@@ -30,8 +30,8 @@ public class GameData {
 		return gamedata;
 	}
 	
-	// 房间配置<房间类型，房间列表《房间号，房间数据》>
-	public Map<Integer, Map<String,Room>> roommap = new HashMap<Integer, Map<String,Room>>();
+	// 房间配置<房间类型，房间列表《房间号，房间数据》> 房间类型:人数+":"+GameConfig.XXX
+	public Map<String, Map<String,Room>> roommap = new HashMap<String, Map<String,Room>>();
 	
 	//客户端列表<ip+:+port,客户端数据>
 	public Map<String,ClientData> clientmap = new HashMap<String,ClientData>();

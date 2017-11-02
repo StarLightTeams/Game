@@ -59,13 +59,34 @@ public class ClientTools {
 	}
 	
 	/**
-	 * 设置客户端的状态
+	 * 设置客户端的状态(clientLocState)
 	 * @param ThreadName
 	 * @param state
 	 */
 	public static void setClientLocState(String ThreadName,int state) {
 		String key = ClientTools.getKeyByThreadName(ThreadName);
-		GameData.getSingleton().clientmap.get(key).setClientLocState(ClientConfig.LOGININHALL);
+		GameData.getSingleton().clientmap.get(key).setClientLocState(state);
+	}
+	
+	/**
+	 * 设置客户端的状态(clientLocState)
+	 * @param ThreadName
+	 * @param state
+	 */
+	public static void setLoginState(String ThreadName,boolean LoginState) {
+		String key = ClientTools.getKeyByThreadName(ThreadName);
+		GameData.getSingleton().clientmap.get(key).setIslogin(LoginState);
+	}
+	
+	/**
+	 * 设置客户端的状态(clientLocState)
+	 * @param ThreadName
+	 * @param state
+	 */
+	public static void setState(String ThreadName,int state,boolean LoginState) {
+		String key = ClientTools.getKeyByThreadName(ThreadName);
+		GameData.getSingleton().clientmap.get(key).setClientLocState(state);
+		GameData.getSingleton().clientmap.get(key).setIslogin(LoginState);;
 	}
 	
 	/**
@@ -76,6 +97,7 @@ public class ClientTools {
 	public static void setClientPlayer(String ThreadName,Player player) {
 		String key = ClientTools.getKeyByThreadName(ThreadName);
 		GameData.getSingleton().clientmap.get(key).setPlayer(player);
+		System.out.println(GameData.getSingleton().clientmap.get(key).toString());
 	}
 	
 	/**

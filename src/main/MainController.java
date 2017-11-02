@@ -16,7 +16,8 @@ import rule.agreement.ConnectCommand;
 import rule.agreement.GuestLoginCommand;
 import thread.entity.view.ThreadViewer;
 import tool.ClientTools;
-import tool.CreateRoomTools;
+import tool.CommonTools;
+import tool.RoomTools;
 import tool.JsonTools;
 import tool.agreement.DataBuffer;
 import config.GameConfig;
@@ -95,8 +96,11 @@ public class MainController {
 							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket(),singleExecutor);
 						}
 						//开启心跳线程
-						mainIO.startHeartThread();
-						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("太多太多")));
+//						mainIO.startHeartThread();
+						Map<String,String> maps = new HashMap<String, String>();
+						maps.put("cIp", ip);
+						maps.put("cPort", port+"");
+						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("连接成功",JsonTools.getData(maps))));
 						mainIO.receiveMessage();
 						if(!g.mainiomap.containsKey(ip+":"+port)) {
 							g.mainiomap.put(ip + ":" + port, mainIO);
@@ -108,9 +112,6 @@ public class MainController {
 				} else {
 					Log.d("客户端:" + ip + "用户达到上限");
 				}
-
-				// 用户登录
-				// 将用户添加入房间
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -126,20 +127,21 @@ public class MainController {
 
 		// 创建两个普通房间列表
 		// 初始化两个房间
-		g.roommap.put(2, new HashMap<String, Room>());
-		g.roommap.put(4, new HashMap<String, Room>());
+		g.roommap.put(RoomTools.createRoomType(2, GameConfig.doubleCommonGame), new HashMap<String, Room>());
+		g.roommap.put(RoomTools.createRoomType(4, GameConfig.fourCommonGame), new HashMap<String, Room>());
 		// 双人普通房
 		for (int i = 0; i < GameConfig.doubleRoomCount; i++) {
-			String roomId = CreateRoomTools.createRoomID(2, i);
+			String roomId = RoomTools.createRoomID(2, i);
 			DoubleRoom dr = new FactoryDoubleRoom().createRoom(roomId);
-			CreateRoomTools.insertTable(g.roommap, 2, roomId, dr);
+			RoomTools.insertTable(g.roommap, RoomTools.createRoomType(2, GameConfig.doubleCommonGame), roomId, dr);
 		}
 		// 四人普通房
 		for (int i = 0; i < GameConfig.fourRoomCount; i++) {
-			String roomId = CreateRoomTools.createRoomID(4, i);
+			String roomId = RoomTools.createRoomID(4, i);
 			FourRoom fr = new FactoryFourRoom().createRoom(roomId);
-			CreateRoomTools.insertTable(g.roommap, 4, roomId, fr);
+			RoomTools.insertTable(g.roommap, RoomTools.createRoomType(4, GameConfig.fourCommonGame), roomId, fr);
 		}
+		
 
 	}
 

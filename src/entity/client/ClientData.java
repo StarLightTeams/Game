@@ -21,6 +21,8 @@ public class ClientData {
 	private int clientLocState = 0;
 	//Íæ¼Ò
 	public Player player;
+	//ÊÇ·ñ´æ»î
+	public boolean isLive=false;
 	
 	public ClientData() {
 		
@@ -34,6 +36,14 @@ public class ClientData {
 	
 	
 	
+	public boolean isLive() {
+		return isLive;
+	}
+
+	public void setLive(boolean isLive) {
+		this.isLive = isLive;
+	}
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -79,4 +89,11 @@ public class ClientData {
 	public void setIslogin(boolean islogin) {
 		this.islogin = islogin;
 	}
+
+	@Override
+	public String toString() {
+		return "ClientData [ip=" + ip + ", port=" + port + ", clientSocket=" + clientSocket + ", islogin=" + islogin
+				+ ", clientLocState=" + clientLocState + ", player=" + player + ", isLive=" + isLive + "]";
+	}
+	
 }
