@@ -5,12 +5,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import config.entity.Log;
 import entity.IO.MainIO;
 import entity.info.Info;
+import entity.player.Player;
 import rule.agreement.GeneralInformationCommand;
 import tool.DataBaseTools;
 import tool.JsonTools;
@@ -23,6 +26,78 @@ public class DbOperator {
 	}
 	public DbOperator(DataBaseTools tools) {
 		this.tools = tools;
+	}
+	/**
+	 * 根据名字找到玩家id信细{""}
+	 * @param GuestName
+	 * @return
+	 */
+	public String getPeopleInfoByName(String GuestName) {
+		Connection con = tools.getConectDataBase("db.properties");
+		String sql = "Select * from playerinfo p where p.name = ? ";
+		String str = null;
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, GuestName);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				Map<String,String> maps = new HashMap<String, String>();
+				maps.put("playerId", rs.getInt("playerid")+"");
+				maps.put("playerName", rs.getString("name"));
+				str = JsonTools.getData(maps);
+			}
+			con.commit();
+			return str;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			tools.rollBack(con);
+		}finally {
+			tools.closeCon(con);
+		}
+		return null;
+	}
+	
+	/**
+	 * 判断游客用户登录是否成功
+	 * @param name
+	 * @param password
+	 * @param state
+	 * @return
+	 */
+	public boolean judgeGuestPeopleLogin(int id,String password,int state) {
+		Connection con = tools.getConectDataBase("db.properties");
+		String sql = "Select * From playerinfo p where p.playerid = ? and p.loginState = ? ";
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.setInt(2,state);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				String dbId = rs.getString("playerid");
+				String dbPassword = rs.getString("password");
+				if(dbId.equals(id) && dbPassword.equals(password)) {
+					con.commit();
+					return true;
+				}else {
+					Log.d("用户名密码错误");
+					con.commit();
+					return false;
+				}
+			}else {
+				Log.d("没有此用户");
+				con.commit();
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			tools.rollBack(con);
+			Log.d("判断用户登录出现问题");
+			return false;
+		}finally {
+			tools.closeCon(con);
+		}
 	}
 	
 	/**

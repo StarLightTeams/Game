@@ -1,7 +1,7 @@
 package entity.info;
 
 /**
- * 错误类(用来传递信息)
+ *信息类(用来传递信息)
  */
 public class Info {
 	public String headInfo;

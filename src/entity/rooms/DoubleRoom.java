@@ -15,4 +15,5 @@ public class DoubleRoom extends Room {
 		super.roomInfo.roomType =RoomTools.createRoomType(2, GameConfig.doubleCommonGame);
 		super.roomInfo.createRoomTime = new Date();
 	}
+	
 }

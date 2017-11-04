@@ -17,6 +17,8 @@ import javax.swing.plaf.synth.SynthSpinnerUI;
 import org.junit.Test;
 
 import config.ClientConfig;
+import config.GameConfig;
+import config.RoomConfig;
 import config.ServerConfig;
 import config.entity.Log;
 import data.GameData;
@@ -39,6 +41,7 @@ import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
 import tool.ClientTools;
 import tool.DataBaseTools;
+import tool.DataTransmitTools;
 import tool.GameTools;
 import tool.JsonTools;
 import tool.RoomTools;
@@ -124,6 +127,7 @@ public class MainIO {
 				try {
 					Thread.currentThread().setName(clientThreadRName);
 					DataBuffer data= createAgreeMentMessage(iCommand,str);
+					Log.d("sendMessage = "+str);
 					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
 					os.write(data.readByte());
 					os.flush();
@@ -169,6 +173,7 @@ public class MainIO {
 					//判断是否是登录协议信息
 					if( commandId == CommandID.Login) { //登录协议
 						Player player = (Player) JsonTools.parseJson(dataInfo);
+						int userId = player.getPlayerNo();
 						String userName = player.getPlayerName();
 						String password = player.getPassword();
 						int loginState = player.getLoginState();
@@ -176,7 +181,8 @@ public class MainIO {
 						Log.d("clientId="+clientId);
 						//进行登录验证
 						if(userName!=null && password!=null) {
-							if(dbOperator.judgePeopleLogin(userName, password, loginState)) {
+							boolean flag = loginState!=0?dbOperator.judgePeopleLogin(userName, password, loginState):dbOperator.judgeGuestPeopleLogin(userId, password, loginState);
+							if(flag) {
 								//在数据库中找到这个用户
 								//改变客户端的状态
 								ClientTools.setClientLocState(Thread.currentThread().getName(),ClientConfig.LOGININHALL);
@@ -240,8 +246,9 @@ public class MainIO {
 						String GuestName =ClientTools.getGuestPeopleName();
 						//保存到数据库
 						dbOperator.insertNewPlayer(GuestName, "1", ClientConfig.Guest, MainIO.this);
+						String GuestData = dbOperator.getPeopleInfoByName(GuestName);
 						//给客户端发送游客用户
-						sendMessage(new GuestLoginCommand(), JsonTools.getString(new Info("GuestName",GuestName)));
+						sendMessage(new GuestLoginCommand(), JsonTools.getString(new Info("GuestName",GuestData)));
 					}else if(commandId == CommandID.GamePreparing) {//游戏准备
 						gameTools = new GameTools(GameData.getSingleton());
 						Info info =(Info) JsonTools.parseJson(dataInfo);
@@ -257,7 +264,11 @@ public class MainIO {
 						room.roomInfo.endOfLoadingGame++;
 						System.out.println("num="+room.roomInfo.endOfLoadingGame);
 						if(room.roomInfo.endOfLoadingGame == RoomTools.getRoomPeopleNumByRoomType(roomType)) {
-							new GameTools().sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
+							//改变房间内所有玩家的状态
+							DataTransmitTools.changeRoomAllPlayersState(room,RoomConfig.gaming, ClientConfig.GAMESTART, ClientConfig.gaming);
+							//开启房间的数据线程
+							singleExecutor.excute(new roomThread(room));
+							DataTransmitTools.sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
 						}
 					}
 				} catch (IOException e) {
@@ -265,6 +276,44 @@ public class MainIO {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 房间数据控制线程
+	 */
+	public class roomThread implements Runnable{
+		String roomId;
+		String roomType;
+		Room room;
+		public roomThread() {
+			
+		}
+		
+		public roomThread(String roomId,String roomType) {
+			this.roomId = roomId;
+			this.roomType = roomType;
+		}
+		public roomThread(Room room) {
+			this.room = room;
+			this.roomId = room.roomInfo.roomId;
+			this.roomType = room.roomInfo.roomType;
+		}
+		public synchronized void run() {
+			while(true) {
+				Thread.currentThread().setName(roomId);
+				//Log.d("["+Thread.currentThread().getName()+"]="+new String("房间线程开启"));
+				if(roomType == RoomTools.createRoomID(2, GameConfig.doubleCommonGame)) {
+					
+				}else if(roomType == RoomTools.createRoomID(2, GameConfig.doubleSpecialGame)) {
+					
+				}else if(roomType == RoomTools.createRoomID(4, GameConfig.fourCommonGame)) {
+					
+				}else if(roomType == RoomTools.createRoomID(4, GameConfig.fourSpecialGame)) {
+					
+				}
+			}
+		}
+		
 	}
 	
 	/**

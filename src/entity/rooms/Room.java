@@ -17,4 +17,5 @@ public abstract class Room {
 	public Map<Player,Integer> playermap = new HashMap<Player,Integer>();
 	//房间规则
 	public RoomRule roomRule = new RoomRule();
+
 }

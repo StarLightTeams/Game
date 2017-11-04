@@ -85,7 +85,7 @@ public class GameTools {
 							Info info = judgeState(players,room);
 							if(info.headInfo.equals("验证成功")) {
 								//给房间里所有玩家发送验证成功
-								sendAllClientsMessage(players,new VerifyStateCommand(),JsonTools.getString(info),singleExecutor);
+								DataTransmitTools.sendAllClientsMessage(players,new VerifyStateCommand(),JsonTools.getString(info),singleExecutor);
 							}else if(info.headInfo.equals("验证失败")) {
 								mainIo.sendMessage(new VerifyStateErrCommand(), JsonTools.getString(info));
 							}
@@ -107,18 +107,6 @@ public class GameTools {
 		}
 	}
 	
-	public synchronized void sendAllClientsMessage(Map<Player,Integer> players,ICommand icommand,String str,TimeServerHandlerExecute singleExecutor) {
-		Iterator entries = players.entrySet().iterator(); 
-		while (entries.hasNext()) {
-			Map.Entry entry = (Map.Entry) entries.next();
-			Player player = (Player) entry.getKey();
-			ClientData clientData = GameData.getSingleton().clientmap.get(player.clientId);
-			Socket cSocket = clientData.getClientSocket();
-			ClientTools.initClientThreadName(cSocket);
-			MainIO mainIo = new MainIO(cSocket, singleExecutor);
-			mainIo.sendMessage(icommand, str);
-		}
-	}
 	
 	/**
 	 * 判断玩家的状态
@@ -166,7 +154,7 @@ public class GameTools {
 		return new Info(headInfo,JsonTools.getData(maps));
 	}
 	
-	/**
+	/**	
 	 * 判断房间是否已满
 	 * @param room
 	 * @return
