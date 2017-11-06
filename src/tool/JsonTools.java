@@ -60,7 +60,7 @@ public class JsonTools {
 			player.setPlayerName(jObject.getJSONObject("data").getString("playerName"));
 			player.setPassword(jObject.getJSONObject("data").getString("password"));
 			player.setLoginState(Integer.parseInt(jObject.getJSONObject("data").getString("loginState")));
-			player.setClientId(jObject.getJSONObject("data").getString("clientId"));
+			player.setPlayerNo(Integer.parseInt(jObject.getJSONObject("data").getString("playerNo")));
 			return player;
 		}else if("Info".equals(className)){
 			Info info = new Info();

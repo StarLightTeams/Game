@@ -178,9 +178,8 @@ public class MainIO {
 						String password = player.getPassword();
 						int loginState = player.getLoginState();
 						String clientId = player.getClientId();
-						Log.d("clientId="+clientId);
 						//进行登录验证
-						if(userName!=null && password!=null) {
+						if(userName!=null&& password!=null) {
 							boolean flag = loginState!=0?dbOperator.judgePeopleLogin(userName, password, loginState):dbOperator.judgeGuestPeopleLogin(userId, password, loginState);
 							if(flag) {
 								//在数据库中找到这个用户

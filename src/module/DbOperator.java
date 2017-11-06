@@ -77,7 +77,7 @@ public class DbOperator {
 			if(rs.next()) {
 				String dbId = rs.getString("playerid");
 				String dbPassword = rs.getString("password");
-				if(dbId.equals(id) && dbPassword.equals(password)) {
+				if(dbId.equals(id+"") && dbPassword.equals(password)) {
 					con.commit();
 					return true;
 				}else {
