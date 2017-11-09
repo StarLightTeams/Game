@@ -90,7 +90,7 @@ public class GameTools {
 								mainIo.sendMessage(new VerifyStateErrCommand(), JsonTools.getString(info));
 							}
 						}else {
-							mainIo.sendMessage(new WaitOtherPeopleCommand() ,JsonTools.getString(new Info("正在匹配人...")));
+							mainIo.sendMessage(new WaitOtherPeopleCommand() ,JsonTools.getString(new Info("正在匹配人...",JsonTools.getString(room))));
 						}
 					}else {
 						//满了(待优化,房卡)

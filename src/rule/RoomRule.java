@@ -10,4 +10,17 @@ public class RoomRule {
 	public int RoomXXRule;
 	//房间消耗房卡数量
 	public int RoomCostCardCount;
+	public int getRoomXXRule() {
+		return RoomXXRule;
+	}
+	public void setRoomXXRule(int roomXXRule) {
+		RoomXXRule = roomXXRule;
+	}
+	public int getRoomCostCardCount() {
+		return RoomCostCardCount;
+	}
+	public void setRoomCostCardCount(int roomCostCardCount) {
+		RoomCostCardCount = roomCostCardCount;
+	}
+	
 }

@@ -19,4 +19,53 @@ public class RoomInfo {
 	public int roomPLevel = 0;
 	//游戏加载完人数(等于房间人数正式开始游戏)
 	public int endOfLoadingGame = 0;
+	public String getRoomId() {
+		return roomId;
+	}
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
+	}
+	public Date getCreateRoomTime() {
+		return createRoomTime;
+	}
+	public void setCreateRoomTime(Date createRoomTime) {
+		this.createRoomTime = createRoomTime;
+	}
+	public String getRoomType() {
+		return roomType;
+	}
+	public void setRoomType(String roomType) {
+		this.roomType = roomType;
+	}
+	public int getRoomPeopleCount() {
+		return RoomPeopleCount;
+	}
+	public void setRoomPeopleCount(int roomPeopleCount) {
+		RoomPeopleCount = roomPeopleCount;
+	}
+	public int getRoomState() {
+		return RoomState;
+	}
+	public void setRoomState(int roomState) {
+		RoomState = roomState;
+	}
+	public Date getRoomCreateTime() {
+		return RoomCreateTime;
+	}
+	public void setRoomCreateTime(Date roomCreateTime) {
+		RoomCreateTime = roomCreateTime;
+	}
+	public int getRoomPLevel() {
+		return roomPLevel;
+	}
+	public void setRoomPLevel(int roomPLevel) {
+		this.roomPLevel = roomPLevel;
+	}
+	public int getEndOfLoadingGame() {
+		return endOfLoadingGame;
+	}
+	public void setEndOfLoadingGame(int endOfLoadingGame) {
+		this.endOfLoadingGame = endOfLoadingGame;
+	}
+	
 }
