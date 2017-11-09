@@ -25,5 +25,7 @@ public class GameConfig {
 	public static int fourCommonGame = 2;
 	public static int fourSpecialGame = 3;
 	
-	
+	//游戏种类
+	//[1 - "chuachua游戏"]
+	public static int GAMETYPELEIXING = 1;
 }
