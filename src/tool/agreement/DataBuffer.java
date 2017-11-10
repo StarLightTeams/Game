@@ -44,7 +44,7 @@ public class DataBuffer {
 //		System.out
 //				.println(" ReadChar() buffer[position] = " + (int)buffer[position]);
 		position=8;
-		System.out.println("buffer[position]="+buffer[position]);
+//		System.out.println("buffer[position]="+buffer[position]);
 		return buffer[position++];
 	}
 
@@ -61,7 +61,7 @@ public class DataBuffer {
 
 	public char[] ReadChars() {
 		int len = ReadChar() & 0xFFFFFF;
-		System.out.println("charsLength="+len);
+//		System.out.println("charsLength="+len);
 		charsLength = len; // added for continue play command, _CardCount =
 							// readchars();
 		return ReadRawBytes(len);
@@ -83,7 +83,7 @@ public class DataBuffer {
 			string_buffer[i] = buffer[position + i];
 		}
 		position += len;
-		System.out.println("String_buffer="+string_buffer);
+//		System.out.println("String_buffer="+string_buffer);
 		return string_buffer;
 	};
 
@@ -154,7 +154,7 @@ public class DataBuffer {
 //		if (length > 255) {
 //			length = 255;
 //		}
-		System.out.println("length="+length);
+//		System.out.println("length="+length);
 		WriteChar((char) length);
 		// System.arraycopy(data, startPos, buffer, position, length);
 		// strncpy((char *)buffer+position, (const char*)data+startPos, length);
@@ -164,7 +164,7 @@ public class DataBuffer {
 //				System.out.println("position+i="+(position+i)+",startPos + i="+(startPos + i));
 			}
 		}
-		System.out.println("buffer="+new String(buffer));
+//		System.out.println("buffer="+new String(buffer));
 		position += length;
 		buffer_data_length += length;
 	}

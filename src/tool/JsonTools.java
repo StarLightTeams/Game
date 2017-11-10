@@ -196,6 +196,7 @@ public class JsonTools {
 			Info info = new Info();
 			info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
 			info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
+			System.out.println(info.getHeadInfo()+","+info.getDataInfo());
 			return info;
 		}else if("Room".equals(superName)){
 			try {
