@@ -1,5 +1,6 @@
 package entity.player;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -17,7 +18,7 @@ public class Player {
 	//玩家房卡
 	public int playerCard;
 	//玩家道具
-	public Map<String,Integer> djmap;
+	public Map<String,Integer> djmap = new HashMap<String, Integer>();
 	//玩家登录状态【 0.游客登录1.qq登录 2.微信登录 4登录】
 	public int loginState = 0;
 	//游戏状态[0未进行游戏 1.等待游戏2.正在游戏3.结束游戏]
