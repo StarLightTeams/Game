@@ -44,6 +44,7 @@ public class DataBuffer {
 //		System.out
 //				.println(" ReadChar() buffer[position] = " + (int)buffer[position]);
 		position=8;
+		System.out.println("buffer[position]="+buffer[position]);
 		return buffer[position++];
 	}
 
@@ -59,7 +60,8 @@ public class DataBuffer {
 	}
 
 	public char[] ReadChars() {
-		int len = ReadChar() & 0xFF;
+		int len = ReadChar() & 0xFFFFFF;
+		System.out.println("charsLength="+len);
 		charsLength = len; // added for continue play command, _CardCount =
 							// readchars();
 		return ReadRawBytes(len);
@@ -81,7 +83,7 @@ public class DataBuffer {
 			string_buffer[i] = buffer[position + i];
 		}
 		position += len;
-		
+		System.out.println("String_buffer="+string_buffer);
 		return string_buffer;
 	};
 
@@ -94,7 +96,7 @@ public class DataBuffer {
 	}
 
 	public String ReadString2() {
-		int len = ReadShort() & 0xFFFF;
+		int len = ReadShort() & 0xFFFFFF;
 		char[] a = ReadRawBytes(len);
 		if (a == null)
 			return new String("");
@@ -149,17 +151,20 @@ public class DataBuffer {
 		if (length > data_length - startPos) {
 			length = data_length - startPos;
 		}
-		if (length > 255) {
-			length = 255;
-		}
+//		if (length > 255) {
+//			length = 255;
+//		}
+		System.out.println("length="+length);
 		WriteChar((char) length);
 		// System.arraycopy(data, startPos, buffer, position, length);
 		// strncpy((char *)buffer+position, (const char*)data+startPos, length);
 		if (data != null) {
 			for (int i = 0; i < length; i++) {
 				buffer[position + i] = data[startPos + i];
+//				System.out.println("position+i="+(position+i)+",startPos + i="+(startPos + i));
 			}
 		}
+		System.out.println("buffer="+new String(buffer));
 		position += length;
 		buffer_data_length += length;
 	}
