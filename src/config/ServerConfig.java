@@ -18,6 +18,8 @@ public class ServerConfig {
 	}
 	//端口
 	public int port = 10020;
-	public int serverConnectionTime = 1000;//链接时间
-	public int peopleConnectionCount = 50;//最大链接数量
+//	public int serverConnectionTime = 1000;//链接时间
+//	public int peopleConnectionCount = 50;//最大链接数量
+	//房间数量
+	public int roomCount = 50;
 }

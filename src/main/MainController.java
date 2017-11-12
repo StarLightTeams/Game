@@ -44,8 +44,7 @@ public class MainController {
 	ServerSocket server = null;
 	// 服务器配置
 	ServerConfig sc = ServerConfig.getInstance();
-	TimeServerHandlerExecute singleExecutor = new TimeServerHandlerExecute(sc.peopleConnectionCount,
-			sc.serverConnectionTime);
+	TimeServerHandlerExecute singleExecutor = new TimeServerHandlerExecute(sc.roomCount);
 	Socket socket = null;
 	// 获取单例
 	GameData g = GameData.getSingleton();
@@ -100,11 +99,11 @@ public class MainController {
 						Map<String,String> maps = new HashMap<String, String>();
 						maps.put("cIp", ip);
 						maps.put("cPort", port+"");
-						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("连接成功",JsonTools.getData(maps))));
-						mainIO.receiveMessage();
 						if(!g.mainiomap.containsKey(ip+":"+port)) {
 							g.mainiomap.put(ip + ":" + port, mainIO);
 						}
+						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("连接成功",JsonTools.getData(maps))));
+						mainIO.receiveMessage();
 
 					} else {
 						Log.d("客户端:" + ip + ":" + port + "添加失败");

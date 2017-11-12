@@ -39,12 +39,15 @@ import rule.agreement.LoginOutCommand;
 import rule.agreement.RegisterCommand;
 import thread.entity.FactoryThread;
 import thread.entity.exception.ThreadException;
+import thread.entity.view.ThreadViewerTableModel;
 import tool.ClientTools;
+import tool.CommonTools;
 import tool.DataBaseTools;
 import tool.DataTransmitTools;
 import tool.GameTools;
 import tool.JsonTools;
 import tool.RoomTools;
+import tool.ThreadTools;
 import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
 
@@ -54,8 +57,8 @@ import tool.agreement.DataBuffer;
 public class MainIO {
 	
 	public Socket clientSocket;
-	public Thread send;
-	public Thread receive;
+	public Runnable send;
+	public Runnable receive;
 	public Thread heart_thread;
 	public OutputStream os;
 	public InputStream is;
@@ -89,7 +92,8 @@ public class MainIO {
 //		send = new FactoryThread().newThread(new sendThread(iCommand,str),ClientTools.clientThreadSName);
 //		send.setUncaughtExceptionHandler(new ThreadException());
 //		send.start();
-		singleExecutor.excute(new sendThread(iCommand, str,ClientTools.clientThreadSName));
+		send = new sendThread(iCommand, str,ClientTools.clientThreadSName);
+		singleExecutor.excute(send);
 	}
 	
 	/**
@@ -99,7 +103,8 @@ public class MainIO {
 //		receive = new FactoryThread().newThread(new receiveThread(),ClientTools.clientThreadRName);
 //		receive.setUncaughtExceptionHandler(new ThreadException());
 //		receive.start();
-		singleExecutor.excute(new receiveThread(ClientTools.clientThreadRName));
+		receive = new receiveThread(ClientTools.clientThreadRName);
+		singleExecutor.excute(receive);
 	}
 	
 	/**
@@ -131,11 +136,11 @@ public class MainIO {
 					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
 					os.write(data.readByte());
 					os.flush();
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -156,7 +161,7 @@ public class MainIO {
 			this.clientThreadRName = clientThreadRName;
 		}
 		public synchronized void run() {
-			while(true) {
+			while(!Thread.currentThread().isInterrupted()) {
 				try {
 					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
@@ -269,6 +274,22 @@ public class MainIO {
 							singleExecutor.excute(new roomThread(room));
 							DataTransmitTools.sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
 						}
+					}else if(commandId == CommandID.DisConnnect) {//断开连接协议
+						Info info = (Info) JsonTools.parseJson(dataInfo);
+						System.out.println("info.dataInfo="+info.dataInfo);
+						Map<String, String> maps =JsonTools.parseData(info.dataInfo);
+						String clientId = maps.get("clientId");
+						ClientData clientData = GameData.getSingleton().clientmap.get(clientId);
+						//先客户端状态 isLive设置为false
+						clientData.getClientSocket().close();
+						//在列表汇总移除
+						GameData.getSingleton().clientmap.remove(clientId);
+						//mainIo
+						MainIO mainIo = GameData.getSingleton().mainiomap.get(clientId);
+						mainIo.clientSocket.close();
+						GameData.getSingleton().mainiomap.remove(clientId);
+						//关闭线程
+						ThreadTools.remove(clientId);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -385,4 +406,13 @@ public class MainIO {
 		System.out.println("timecount="+timecount);
 		new Thread(new HeartThread()).start();
 	}
+
+	@Override
+	public String toString() {
+		return "MainIO [clientSocket=" + clientSocket + ", send=" + send + ", receive=" + receive + ", heart_thread="
+				+ heart_thread + ", os=" + os + ", is=" + is + ", singleExecutor=" + singleExecutor + ", time_tocount="
+				+ time_tocount + ", MAX_TIME_END_COUNT=" + MAX_TIME_END_COUNT + ", timecount=" + timecount
+				+ ", dbOperator=" + dbOperator + ", gameTools=" + gameTools + "]";
+	}
+	
 }
