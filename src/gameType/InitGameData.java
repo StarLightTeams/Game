@@ -16,7 +16,7 @@ public class InitGameData {
 	public static void initGameData(){
 		
 		GameData g = GameData.getSingleton();
-		Map<String,Room> m =g.roommap.get(RoomTools.createRoomType(2, GameConfig.doubleCommonGame));
+		Map<String,Room> m =g.roommap.get(RoomTools.createRoomType(2, GameConfig.doubleRoomCount));
 		for (Map.Entry<String,Room> entry : m.entrySet()) { 
 			//¼ükey  -- entry.getKey()
 			//¼üvalue-- entry.getValue()

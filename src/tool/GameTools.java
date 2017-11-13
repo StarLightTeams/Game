@@ -24,6 +24,7 @@ import entity.player.Player;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
+import gameType.chuachua.data.ChuaChuaGameMainData;
 import main.TimeServerHandlerExecute;
 import rule.agreement.GamePreparingErrorCommand;
 import rule.agreement.GeneralInformationCommand;
@@ -148,6 +149,8 @@ public class GameTools {
 			headInfo = "验证成功";
 			maps.put("roomId", room.roomInfo.roomId);
 			maps.put("roomType", room.roomInfo.roomType);
+			//加入Game类
+			maps.put("Game", JsonTools.getString( ChuaChuaGameMainData.gameData.get(room.roomInfo.roomId)));
 		}else {
 			headInfo = "验证失败";
 		}
