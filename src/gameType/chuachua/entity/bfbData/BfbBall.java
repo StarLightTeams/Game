@@ -1,5 +1,8 @@
 package gameType.chuachua.entity.bfbData;
 
+/** 
+ *°Ù·Ö±ÈÇò
+ */
 public class BfbBall {
 
 	public double bf_d;//°ë¾¶

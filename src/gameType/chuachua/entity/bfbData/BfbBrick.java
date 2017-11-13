@@ -1,5 +1,8 @@
 package gameType.chuachua.entity.bfbData;
 
+/**
+ * 百分比砖
+ */
 public class BfbBrick {
 
 	public double bg_height;//高

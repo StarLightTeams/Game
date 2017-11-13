@@ -9,6 +9,6 @@ public class YueFenTool {
 	}
 	@Test
 	public void test(){
-		System.out.println(yueFen(10));
+		System.out.println(yueFen(20.22222222));
 	}
 }

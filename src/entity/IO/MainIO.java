@@ -166,6 +166,7 @@ public class MainIO {
 					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
 					int len=is.read(b);
+					System.out.println("len======="+len);
 //					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
 					ICommand iCommand = AgreeMentTools.getICommand(data);

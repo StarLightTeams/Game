@@ -1,5 +1,8 @@
 package gameType.chuachua.entity.bfbData;
 
+/**
+ * °Ù·Ö±È°å
+ */
 public class BfbBoard {
 
 	public double bf_width; //¿í
