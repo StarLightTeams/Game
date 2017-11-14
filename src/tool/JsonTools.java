@@ -378,6 +378,7 @@ public class JsonTools {
 		return s[s.length-1];
 	}
 	
+	
 	@Test
 	public void test() {
 		Room room = new DoubleRoom(RoomTools.createRoomID(2, GameConfig.doubleCommonGame));

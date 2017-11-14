@@ -166,7 +166,7 @@ public class MainController {
 			            }  
 			        }  
 			}
-		}).start();
+		},"ThreadView").start();
 		//·şÎñÆ÷
 		MainController controller = new MainController();
 		try {

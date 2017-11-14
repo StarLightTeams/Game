@@ -1,6 +1,7 @@
 package main;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,12 +30,38 @@ public class TimeServerHandlerExecute {
 	public TimeServerHandlerExecute(int roomCount) {
 		int maxPoolSize = roomCount*4*2+2;
 		executeor = Executors.newFixedThreadPool(maxPoolSize);
+//		executeor = Executors.newCachedThreadPool();
 	}
 	
-	public void excute(java.lang.Runnable task) {
+//	public void excute(Callable<String> task) {
+//		 Future<?> funture = executeor.submit(task);
+//		 try {
+//			 funture.get();
+//		} catch (InterruptedException e) {
+//			Throwable cause = e.getCause();
+//			cause.printStackTrace();
+//		} catch (ExecutionException e) {
+//			Throwable cause = e.getCause();
+//			cause.printStackTrace();
+//		}
+//	}
+	
+	public void excute(Runnable task) {
+		//管理终止的方法，以及可为跟踪一个或多个异步任务执行状况 Future
 		 Future<?> funture = executeor.submit(task);
+		 System.out.println("task="+task.getClass().getName());
 		 try {
-			 funture.get();
+			 if(!task.getClass().getName().equals("entity.IO.MainIO$receiveThread")) {
+				 while(true) {
+					 if(funture.isDone() && !funture.isCancelled()) {
+//						 System.out.println("funture.isDone()="+funture.isDone());
+						 System.out.println("funture.get()="+funture.get());
+						 break;
+					 }else {
+						 Thread.sleep(10);
+					 }
+				 }
+			 }
 		} catch (InterruptedException e) {
 			Throwable cause = e.getCause();
 			cause.printStackTrace();

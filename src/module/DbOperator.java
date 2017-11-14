@@ -183,6 +183,7 @@ public class DbOperator {
 		String boxId = name+"_b"+state;
 		String friendId = name+"_f"+state;
 		String gradeId = name+"_g"+state;
+		Log.d("boxId="+boxId+",friendId="+friendId+",gradeId="+gradeId);
 		int pFlag = 0;
 		Connection con = tools.getConectDataBase("db.properties");
 		String sql = "INSERT INTO boxinfo (boxid) VALUES (?)";
@@ -194,6 +195,7 @@ public class DbOperator {
 			int bFlag = ps.executeUpdate();
 			if(bFlag==1) {
 				Log.d("创建个人道具箱成功");
+				System.out.println(mainIO);
 				mainIO.sendMessage(new GeneralInformationCommand(), JsonTools.getString(new Info("注册中","创建个人道具箱成功")));
 				sql = "INSERT INTO gradeinfo "
 						+"(gradeid) "
@@ -201,6 +203,7 @@ public class DbOperator {
 				ps = con.prepareStatement(sql);
 				ps.setString(1,gradeId);
 				int gFlag = ps.executeUpdate();
+				Log.d("ggggggFlag="+gFlag);
 				if(gFlag==1) {
 					Log.d("创建个人分数表成功");
 					mainIO.sendMessage(new GeneralInformationCommand(), JsonTools.getString(new Info("注册中","创建个人分数表成功")));

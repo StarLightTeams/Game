@@ -92,7 +92,7 @@ public class MainIO {
 //		send = new FactoryThread().newThread(new sendThread(iCommand,str),ClientTools.clientThreadSName);
 //		send.setUncaughtExceptionHandler(new ThreadException());
 //		send.start();
-		send = new sendThread(iCommand, str,ClientTools.clientThreadSName);
+		Runnable send = new sendThread(iCommand, str,ClientTools.clientThreadSName);
 		singleExecutor.excute(send);
 	}
 	
@@ -103,7 +103,7 @@ public class MainIO {
 //		receive = new FactoryThread().newThread(new receiveThread(),ClientTools.clientThreadRName);
 //		receive.setUncaughtExceptionHandler(new ThreadException());
 //		receive.start();
-		receive = new receiveThread(ClientTools.clientThreadRName);
+		Runnable receive = new receiveThread(ClientTools.clientThreadRName);
 		singleExecutor.excute(receive);
 	}
 	
@@ -166,7 +166,7 @@ public class MainIO {
 					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
 					int len=is.read(b);
-					System.out.println("len======="+len);
+//					System.out.println("len======="+len);
 //					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
 					ICommand iCommand = AgreeMentTools.getICommand(data);
@@ -249,6 +249,7 @@ public class MainIO {
 						}
 					}else if(commandId == CommandID.GuestLogin) {//游客登录协议
 						String GuestName =ClientTools.getGuestPeopleName();
+						String mainIoId = ClientTools.getKeyByThreadName(clientThreadRName);
 						//保存到数据库
 						dbOperator.insertNewPlayer(GuestName, "1", ClientConfig.Guest, MainIO.this);
 						String GuestData = dbOperator.getPeopleInfoByName(GuestName);
@@ -410,10 +411,10 @@ public class MainIO {
 
 	@Override
 	public String toString() {
-		return "MainIO [clientSocket=" + clientSocket + ", send=" + send + ", receive=" + receive + ", heart_thread="
-				+ heart_thread + ", os=" + os + ", is=" + is + ", singleExecutor=" + singleExecutor + ", time_tocount="
-				+ time_tocount + ", MAX_TIME_END_COUNT=" + MAX_TIME_END_COUNT + ", timecount=" + timecount
-				+ ", dbOperator=" + dbOperator + ", gameTools=" + gameTools + "]";
+		return "MainIO [clientSocket=" + clientSocket + ", heart_thread=" + heart_thread + ", os=" + os + ", is=" + is
+				+ ", singleExecutor=" + singleExecutor + ", time_tocount=" + time_tocount + ", MAX_TIME_END_COUNT="
+				+ MAX_TIME_END_COUNT + ", timecount=" + timecount + ", dbOperator=" + dbOperator + ", gameTools="
+				+ gameTools + "]";
 	}
 	
 }
