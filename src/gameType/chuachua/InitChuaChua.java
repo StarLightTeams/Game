@@ -85,8 +85,8 @@ public class InitChuaChua {
 	}
 	//初始化木板
 	public static void initBoard(Game game){
-		game.myborad = new Board(220,60,320,434,20,5);//自己的板
-		game.enemyborad = new Board(220,60,320,702,20,5);//敌方的板
+		game.myborad = new Board(220,60,320,702,20,5);//自己的板
+		game.enemyborad = new Board(220,60,320,434,20,5);//敌方的板
 		
 	}
 	/**
