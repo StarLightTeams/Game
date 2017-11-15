@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -19,12 +20,17 @@ import org.junit.Test;
 
 import config.GameConfig;
 import config.entity.Log;
+
 import entity.info.Info;
 import entity.player.Player;
 import entity.rooms.DoubleRoom;
 import entity.rooms.Room;
 import entity.rooms.RoomInfo;
-
+import gameType.chuachua.entity.Ball;
+import gameType.chuachua.entity.Board;
+import gameType.chuachua.entity.BoardProps;
+import gameType.chuachua.entity.Brick;
+import gameType.chuachua.entity.Game;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -110,19 +116,19 @@ public class JsonTools {
 		
 		String[] sstrss = sstrs.split(",");
 		
-		String sst="";
+//		String sst="";
 		Map<String,String> ssMaps = new HashMap<String, String>();
 		int kk=0;
 		for(int i=0;i<sstrss.length;i++) {
 			String[] ssss = sstrss[i].split("\\:");
-			System.out.println("ssss[1]="+ssss[1]);
+//			System.out.println("ssss[1]="+ssss[1]);
 			if(ssss[1].equals("{}")) {
 //				System.out.println(sInfo.get(kk));
 				ssMaps.put(ssss[0].substring(1, ssss[0].length()-1), "{"+sInfo.get(kk)+"}");
 				kk++;
 			}else {
-				ssMaps.put(ssss[0].substring(1, ssss[0].length()-1), ssss[1].substring(1, ssss[0].length()-1));
-				sst = ssss[0].substring(1, ssss[0].length()-1);
+				ssMaps.put(ssss[0].substring(1, ssss[0].length()-1), ssss[1].substring(1, ssss[1].length()-1));
+//				sst = ssss[0].substring(1, ssss[0].length()-1);
 			}
 		}
 		CommonTools.listMaps(ssMaps);
@@ -181,8 +187,8 @@ public class JsonTools {
 	}
 	
 	public static Object parseJson(String str) {
-		  
-		JSONObject jObject = JSONObject.fromObject(str);
+		System.out.println("parseJsonStr="+str);
+		JSONObject jObject = JSONObject.fromObject(str.trim());
 		String className = jObject.getString("className");
 		String superName = jObject.getString("superName");
 		if("Player".equals(className)) {
@@ -191,6 +197,7 @@ public class JsonTools {
 			player.setPassword(jObject.getJSONObject("data").getString("password"));
 			player.setLoginState(Integer.parseInt(jObject.getJSONObject("data").getString("loginState")));
 			player.setPlayerNo(Integer.parseInt(jObject.getJSONObject("data").getString("playerNo")));
+			player.setClientId(jObject.getJSONObject("data").getString("clientId"));
 			return player;
 		}else if("Info".equals(className)){
 			Info info = new Info();
@@ -198,7 +205,106 @@ public class JsonTools {
 			info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
 			System.out.println(info.getHeadInfo()+","+info.getDataInfo());
 			return info;
-		}else if("Room".equals(superName)){
+		}else if("Game".equals(className)){//游戏数据参数
+			Game game = new Game();
+			JSONObject gameObject = jObject.getJSONObject("data");
+			Log.d("-----------------------------");
+			JSONArray ballList = gameObject.getJSONArray("ball_list");
+			List<Ball> balls = new ArrayList<Ball>();
+			for(int i=0;i<ballList.size();i++) {
+				Ball ball = new Ball();
+				JSONObject object =  ballList.getJSONObject(i);
+				ball.setD(object.getInt("d"));
+				ball.setBx(object.getDouble("bx"));
+				ball.setBy(object.getDouble("by"));
+				ball.setySpeed(object.getDouble("ySpeed"));
+				ball.setxSpeed(object.getDouble("xSpeed"));
+				ball.setxA(object.getDouble("xA"));
+				ball.setyA(object.getDouble("yA"));
+				ball.setDegree(object.getDouble("degree"));
+				System.out.println(ball.toString());
+				balls.add(ball);
+			}
+			game.ball_list = balls;
+			Log.d("-----------------------------");
+			
+			JSONArray myBrickListObject = gameObject.getJSONArray("myBrickList");
+			List<Brick> myBrickList = new ArrayList<Brick>();  
+			for(int i=0;i<myBrickListObject.size();i++) {
+				Brick brick = new Brick();
+				JSONObject object = myBrickListObject.getJSONObject(i);
+				brick.setHeight(object.getInt("height"));
+				brick.setWidth(object.getInt("width"));
+				brick.setLocX(object.getDouble("locX"));
+				brick.setLocY(object.getDouble("locY"));
+				brick.setbPropsId(object.getString("bPropsId"));
+				brick.setHardness(object.getInt("hardness"));
+				System.out.println(brick.toString());
+				myBrickList.add(brick);
+			}  
+			game.myBrickList = myBrickList;
+			Log.d("-----------------------------");
+			
+			JSONArray enemyBrickListObject = gameObject.getJSONArray("enemyBrickList");
+			List<Brick> enemyBrickList = new ArrayList<Brick>();  
+			for(int i=0;i<enemyBrickListObject.size();i++) {
+				Brick brick = new Brick();
+				JSONObject object = enemyBrickListObject.getJSONObject(i);
+				brick.setHeight(object.getInt("height"));
+				brick.setWidth(object.getInt("width"));
+				brick.setLocX(object.getDouble("locX"));
+				brick.setLocY(object.getDouble("locY"));
+				brick.setbPropsId(object.getString("bPropsId"));
+				brick.setHardness(object.getInt("hardness"));
+				System.out.println(brick.toString());
+				enemyBrickList.add(brick);
+			}  
+			game.enemyBrickList = enemyBrickList;
+			
+			JSONObject myBoard = gameObject.getJSONObject("myborad");
+			Board myboard = new Board();
+			myboard.setWidth(myBoard.getInt("width"));
+			myboard.setHeight(myBoard.getInt("height"));
+			myboard.setLocX(myBoard.getDouble("locX"));
+			myboard.setLocY(myBoard.getDouble("locY"));
+			myboard.setySpeed(myBoard.getInt("ySpeed"));
+			myboard.setyA(myBoard.getInt("yA"));
+			Log.d("-----------------------------");
+			Log.d(myboard.toString());
+			game.myborad = myboard;
+			
+			JSONObject enemyBorad = gameObject.getJSONObject("enemyborad");
+			Board enemyborad = new Board();
+			enemyborad.setWidth(enemyBorad.getInt("width"));
+			enemyborad.setHeight(enemyBorad.getInt("height"));
+			enemyborad.setLocX(enemyBorad.getDouble("locX"));
+			enemyborad.setLocY(enemyBorad.getDouble("locY"));
+			enemyborad.setySpeed(enemyBorad.getInt("ySpeed"));
+			enemyborad.setyA(enemyBorad.getInt("yA"));
+			Log.d("-----------------------------");
+			Log.d(enemyborad.toString());
+			game.enemyborad = enemyborad;
+			
+			JSONObject boardPropsmap = gameObject.getJSONObject("boardPropsmap");
+			Map<Integer,BoardProps> boardPropsmaps =new HashMap<Integer,BoardProps>();
+			Iterator entries = boardPropsmap.entrySet().iterator();
+			while(entries.hasNext()) {
+				Map.Entry entry = (Map.Entry) entries.next();
+				String index =(String) entry.getKey();
+				String s = boardPropsmap.getString(index);
+				JSONObject boardPropsObject = JSONObject.fromObject(s);
+				Log.d("--------------------------------");
+				Log.d("index="+index+",s="+s);
+				BoardProps boardProps = new BoardProps();
+				boardProps.setPropsId(boardPropsObject.getString("propsId"));
+				boardProps.setPropsName(boardPropsObject.getString("propsName"));
+				boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
+				boardPropsmaps.put(Integer.parseInt(index), boardProps);
+			}
+			game.boardPropsmap = boardPropsmaps;
+			
+			return game;
+		}else if("Room".equals(superName)){ //房间
 			try {
 				Room room = new Room();
 				RoomInfo roomInfo = new RoomInfo();
@@ -378,28 +484,32 @@ public class JsonTools {
 		return s[s.length-1];
 	}
 	
-	
 	@Test
 	public void test() {
-		Room room = new DoubleRoom(RoomTools.createRoomID(2, GameConfig.doubleCommonGame));
-		Player player =  new Player();
-		player.setPlayerName("admin");
-		player.setPassword("admin");
-		player.djmap.put("1",2);
-		player.djmap.put("2",3);
-		player.djmap.put("4",5);		
-		room.playermap.put(player,1);
+//		Room room = new DoubleRoom(RoomTools.createRoomID(2, GameConfig.doubleCommonGame));
+//		Player player =  new Player();
+//		player.setPlayerName("admin");
+//		player.setPassword("admin");
+//		player.djmap.put("1",2);
+//		player.djmap.put("2",3);
+//		player.djmap.put("4",5);		
+//		room.playermap.put(player,1);
 //		String str= getString(player);
 //		System.out.println(str);
-		String str = JsonTools.getString("{\"superName\":\"Room\",\"data\":{\"playermap\":{\"Player [clientId=null, playerNo=11, playerName=, password=1, playerCard=0, djmap=null, loginState=0, gamestate=1]\":1},\"roomInfo\":{\"createRoomTime\":\"2017-11-10 06:02:48\",\"endOfLoadingGame\":0,\"roomCreateTime\":\"\",\"roomId\":\"2009\",\"roomPLevel\":1,\"roomPeopleCount\":1,\"roomState\":1,\"roomType\":\"2:0\"},\"roomRule\":{\"roomCostCardCount\":0,\"roomXXRule\":0}},\"className\":\"DoubleRoom\"}clientId=null, playerNo=11, playerName=, password=1, playerCard=0, djmap=null, loginState=0, gamestate=1");
-		System.out.println("str="+str);
-		Room room1 = (Room) JsonTools.parseJson(str);
-		System.out.println(room1.toString());
+//		String str = JsonTools.getString("{\"superName\":\"Room\",\"data\":{\"playermap\":{\"Player [clientId=null, playerNo=11, playerName=, password=1, playerCard=0, djmap=null, loginState=0, gamestate=1]\":1},\"roomInfo\":{\"createRoomTime\":\"2017-11-10 06:02:48\",\"endOfLoadingGame\":0,\"roomCreateTime\":\"\",\"roomId\":\"2009\",\"roomPLevel\":1,\"roomPeopleCount\":1,\"roomState\":1,\"roomType\":\"2:0\"},\"roomRule\":{\"roomCostCardCount\":0,\"roomXXRule\":0}},\"className\":\"DoubleRoom\"}clientId=null, playerNo=11, playerName=, password=1, playerCard=0, djmap=null, loginState=0, gamestate=1");
+//		Map<String,String> str = JsonTools.pasreObjectData("{\"superName\":\"Object\",\"data\":{\"ball_list\":[{\"bx\":320,\"by\":568,\"d\":64,\"degree\":45,\"xA\":1,\"xSpeed\":10,\"yA\":1,\"ySpeed\":10}],\"boardPropsmap\":{},\"enemyBrickList\":[{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":1136,\"width\":100}],\"enemyborad\":{\"height\":60,\"locX\":210,\"locY\":164,\"width\":220,\"yA\":5,\"ySpeed\":20},\"myBrickList\":[{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":300,\"width\":100}],\"myborad\":{\"height\":60,\"locX\":210,\"locY\":432,\"width\":220,\"yA\":5,\"ySpeed\":20}},\"className\":\"Game\"}");
+		String sstr = "{\"superName\":\"Object\",\"data\":{\"ball_list\":[{\"bx\":320,\"by\":568,\"d\":64,\"degree\":45,\"xA\":1,\"xSpeed\":10,\"yA\":1,\"ySpeed\":10}],\"boardPropsmap\":{\"1\":{\"propsId\":\"1\",\"propsInfo\":\"敌方减速\",\"propsName\":\"减速\"},\"2\":{\"propsId\":\"2\",\"propsInfo\":\"小球击中连击(范围伤)\",\"propsName\":\"连击\"},\"3\":{\"propsId\":\"3\",\"propsInfo\":\"多发加速\",\"propsName\":\"加速\"},\"4\":{\"propsId\":\"4\",\"propsInfo\":\"小球多发\",\"propsName\":\"多发\"}},\"enemyBrickList\":[{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":836,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":936,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":1036,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":1136,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":1136,\"width\":100}],\"enemyborad\":{\"height\":60,\"locX\":210,\"locY\":164,\"width\":220,\"yA\":5,\"ySpeed\":20},\"myBrickList\":[{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":0,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":100,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":200,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":20,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":120,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":220,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":320,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":420,\"locY\":300,\"width\":100},{\"bPropsId\":\"\",\"hardness\":0,\"height\":100,\"locX\":520,\"locY\":300,\"width\":100}],\"myborad\":{\"height\":60,\"locX\":210,\"locY\":432,\"width\":220,\"yA\":5,\"ySpeed\":20}}";
+//		System.out.println("str="+str);
+//		Room room1 = (Room) JsonTools.parseJson(str);
+//		System.out.println(room1.toString());
 //		System.out.println(JsonTools.getJsonByString("[playerNo=0, playerName=admin, password=admin, playerCard=0, djmap={}, loginState=0]","Player"));
 //		System.out.println(getMapJsonByString("{1=2,2=3,4=5}"));
 //		String str = "{\"hello\":{\"hello1\":\"test\"},\"hello3\":{\"helloe4\":\"value\"},\"hello2\":\"test2\"}";
 //		pasreObjectData(str);
 //		findStrLastIndex(str,"}");
+//		String s = str.get("data");
+		Game game = (Game) JsonTools.parseJson(sstr);
+		game.toString();
 	}
 	
 }

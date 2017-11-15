@@ -24,6 +24,7 @@ public class InitChuaChua {
 		initSticks(game);
 		initBalls(game);
 		initBoard(game);
+		initBoardProps(game);
 		return game;
 	}
 	//

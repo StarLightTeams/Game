@@ -24,7 +24,9 @@ import entity.player.Player;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
+import gameType.chuachua.InitChuaChua;
 import gameType.chuachua.data.ChuaChuaGameMainData;
+import gameType.chuachua.entity.Game;
 import main.TimeServerHandlerExecute;
 import rule.agreement.GamePreparingErrorCommand;
 import rule.agreement.GeneralInformationCommand;
@@ -81,9 +83,12 @@ public class GameTools {
 						mainIo.sendMessage(new GeneralInformationCommand(),JsonTools.getString(new Info("加入房间"+room.roomInfo.roomId)));
 						//判断此房间是否满人
 						if(judgeRoomFull(room)) {
+							System.out.println("验证房间人已经满了=================");
 							//验证所有玩家状态,玩家所对应的客户端状态,玩家登陆状态 符合
 							Map<Player,Integer> players = room.playermap;
+							CommonTools.listMaps(players);
 							Info info = judgeState(players,room);
+							System.out.println("验证信息:==========="+info.toString());
 							if(info.headInfo.equals("验证成功")) {
 								//给房间里所有玩家发送验证成功
 								DataTransmitTools.sendAllClientsMessage(players,new VerifyStateCommand(),JsonTools.getString(info),singleExecutor);
@@ -145,12 +150,15 @@ public class GameTools {
 			}
 		}
 		String headInfo;
+		Log.d("maps.isEmpty()="+maps.isEmpty());
 		if(maps.isEmpty()) {
 			headInfo = "验证成功";
 			maps.put("roomId", room.roomInfo.roomId);
 			maps.put("roomType", room.roomInfo.roomType);
+			Game game = InitChuaChua.initData();
+			ChuaChuaGameMainData.gameData.put(room.roomInfo.roomId,game);
 			//加入Game类
-			maps.put("Game", JsonTools.getString( ChuaChuaGameMainData.gameData.get(room.roomInfo.roomId)));
+			maps.put("Game", JsonTools.getString(game));
 		}else {
 			headInfo = "验证失败";
 		}

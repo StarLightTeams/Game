@@ -166,7 +166,7 @@ public class MainIO {
 					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
 					int len=is.read(b);
-//					System.out.println("len======="+len);
+					System.out.println("len======="+len);
 //					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
 					ICommand iCommand = AgreeMentTools.getICommand(data);
@@ -182,8 +182,10 @@ public class MainIO {
 						int userId = player.getPlayerNo();
 						String userName = player.getPlayerName();
 						String password = player.getPassword();
+//						System.out.println("password----------="+password);
 						int loginState = player.getLoginState();
 						String clientId = player.getClientId();
+//						Log.d("clientId--------------- = "+clientId);
 						//进行登录验证
 						if(userName!=null&& password!=null) {
 							boolean flag = loginState!=0?dbOperator.judgePeopleLogin(userName, password, loginState):dbOperator.judgeGuestPeopleLogin(userId, password, loginState);
@@ -212,6 +214,7 @@ public class MainIO {
 								ClientTools.setClientPlayer(Thread.currentThread().getName(), player);
 								Log.d(clientSocket.toString());
 								//发送登录成功
+								System.out.println("JsonTools.getString(new Info(\"登录成功\"))="+JsonTools.getString(new Info("登录成功")));
 								sendMessage(new LoginCommand(), JsonTools.getString(new Info("登录成功")));
 							}else {
 								//此用户不存在
@@ -383,7 +386,7 @@ public class MainIO {
 				time_tocount --;
 				if(time_tocount<=0){
 					time_tocount = 10;
-					sendMessage(new HeartCommand(), JsonTools.getString(new Info("")));
+					sendMessage(new HeartCommand(), JsonTools.getString(new Info(" ")));
 				}
 				timecount ++;
 				if(timecount >= MAX_TIME_END_COUNT){
@@ -403,10 +406,10 @@ public class MainIO {
 	
 	@Test
 	public void test() {
-		resetHeart();
-		System.out.println("time_tocount="+time_tocount);
-		System.out.println("timecount="+timecount);
-		new Thread(new HeartThread()).start();
+//		resetHeart();
+//		System.out.println("time_tocount="+time_tocount);
+//		System.out.println("timecount="+timecount);
+//		new Thread(new HeartThread()).start();
 	}
 
 	@Override
