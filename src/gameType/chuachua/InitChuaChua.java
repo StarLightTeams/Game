@@ -51,7 +51,7 @@ public class InitChuaChua {
 	}
 	//初始化砖块
 	public static void initSticks(Game game){
-		for(int i=0;i<4;i++){
+		for(int i=0;i<3;i++){
 			for(int j=0;j<6;j++){
 				Brick brick =new Brick();
 				brick.height = 100;
@@ -64,7 +64,7 @@ public class InitChuaChua {
 				game.myBrickList.add(brick);
 			}
 		}
-		for(int i=0;i<4;i++){
+		for(int i=0;i<3;i++){
 			for(int j=0;j<6;j++){
 				Brick brick =new Brick();
 				brick.height = 100;
@@ -85,8 +85,8 @@ public class InitChuaChua {
 	}
 	//初始化木板
 	public static void initBoard(Game game){
-		game.myborad = new Board(220,60,210,432,20,5);//自己的板
-		game.enemyborad = new Board(220,60,210,164,20,5);//敌方的板
+		game.myborad = new Board(220,60,210,404,20,5);//自己的板
+		game.enemyborad = new Board(220,60,210,672,20,5);//敌方的板
 		
 	}
 	/**
