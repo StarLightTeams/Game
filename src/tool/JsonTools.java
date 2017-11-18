@@ -186,182 +186,211 @@ public class JsonTools {
 		return jObject.toString();
 	}
 	
+	/**
+	 * json解析过滤器
+	 * @param str
+	 */
+	public static boolean filtJsonStr(String str) {
+		if(!str.equals("")) {
+			if(str.charAt(0)=='{') {
+				int index = findStrLastIndex(str);
+				System.out.println("index======="+index);
+				System.out.println("str.charAt(index)========"+str.charAt(index));
+				if(str.charAt(index)=='}') {
+					return true;
+				}else {
+					return false;
+				}
+			}else {
+				return false;
+			}
+		}else {
+			return false;
+		}
+	}
+	
 	public static Object parseJson(String str) {
 		System.out.println("parseJsonStr="+str);
-		JSONObject jObject = JSONObject.fromObject(str.trim());
-		String className = jObject.getString("className");
-		String superName = jObject.getString("superName");
-		if("Player".equals(className)) {
-			Player player = new Player();
-			player.setPlayerName(jObject.getJSONObject("data").getString("playerName"));
-			player.setPassword(jObject.getJSONObject("data").getString("password"));
-			player.setLoginState(Integer.parseInt(jObject.getJSONObject("data").getString("loginState")));
-			player.setPlayerNo(Integer.parseInt(jObject.getJSONObject("data").getString("playerNo")));
-			player.setClientId(jObject.getJSONObject("data").getString("clientId"));
-			return player;
-		}else if("Info".equals(className)){
-			Info info = new Info();
-			info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
-			info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
-			System.out.println(info.getHeadInfo()+","+info.getDataInfo());
-			return info;
-		}else if("Game".equals(className)){//游戏数据参数
-			Game game = new Game();
-			JSONObject gameObject = jObject.getJSONObject("data");
-			Log.d("-----------------------------");
-			JSONArray ballList = gameObject.getJSONArray("ball_list");
-			List<Ball> balls = new ArrayList<Ball>();
-			for(int i=0;i<ballList.size();i++) {
-				Ball ball = new Ball();
-				JSONObject object =  ballList.getJSONObject(i);
-				ball.setD(object.getInt("d"));
-				ball.setBx(object.getDouble("bx"));
-				ball.setBy(object.getDouble("by"));
-				ball.setySpeed(object.getDouble("ySpeed"));
-				ball.setxSpeed(object.getDouble("xSpeed"));
-				ball.setxA(object.getDouble("xA"));
-				ball.setyA(object.getDouble("yA"));
-				ball.setDegree(object.getDouble("degree"));
-				System.out.println(ball.toString());
-				balls.add(ball);
-			}
-			game.ball_list = balls;
-			Log.d("-----------------------------");
-			
-			JSONArray myBrickListObject = gameObject.getJSONArray("myBrickList");
-			List<Brick> myBrickList = new ArrayList<Brick>();  
-			for(int i=0;i<myBrickListObject.size();i++) {
-				Brick brick = new Brick();
-				JSONObject object = myBrickListObject.getJSONObject(i);
-				brick.setHeight(object.getInt("height"));
-				brick.setWidth(object.getInt("width"));
-				brick.setLocX(object.getDouble("locX"));
-				brick.setLocY(object.getDouble("locY"));
-				brick.setbPropsId(object.getString("bPropsId"));
-				brick.setHardness(object.getInt("hardness"));
-				System.out.println(brick.toString());
-				myBrickList.add(brick);
-			}  
-			game.myBrickList = myBrickList;
-			Log.d("-----------------------------");
-			
-			JSONArray enemyBrickListObject = gameObject.getJSONArray("enemyBrickList");
-			List<Brick> enemyBrickList = new ArrayList<Brick>();  
-			for(int i=0;i<enemyBrickListObject.size();i++) {
-				Brick brick = new Brick();
-				JSONObject object = enemyBrickListObject.getJSONObject(i);
-				brick.setHeight(object.getInt("height"));
-				brick.setWidth(object.getInt("width"));
-				brick.setLocX(object.getDouble("locX"));
-				brick.setLocY(object.getDouble("locY"));
-				brick.setbPropsId(object.getString("bPropsId"));
-				brick.setHardness(object.getInt("hardness"));
-				System.out.println(brick.toString());
-				enemyBrickList.add(brick);
-			}  
-			game.enemyBrickList = enemyBrickList;
-			
-			JSONObject myBoard = gameObject.getJSONObject("myborad");
-			Board myboard = new Board();
-			myboard.setWidth(myBoard.getInt("width"));
-			myboard.setHeight(myBoard.getInt("height"));
-			myboard.setLocX(myBoard.getDouble("locX"));
-			myboard.setLocY(myBoard.getDouble("locY"));
-			myboard.setySpeed(myBoard.getInt("ySpeed"));
-			myboard.setyA(myBoard.getInt("yA"));
-			Log.d("-----------------------------");
-			Log.d(myboard.toString());
-			game.myborad = myboard;
-			
-			JSONObject enemyBorad = gameObject.getJSONObject("enemyborad");
-			Board enemyborad = new Board();
-			enemyborad.setWidth(enemyBorad.getInt("width"));
-			enemyborad.setHeight(enemyBorad.getInt("height"));
-			enemyborad.setLocX(enemyBorad.getDouble("locX"));
-			enemyborad.setLocY(enemyBorad.getDouble("locY"));
-			enemyborad.setySpeed(enemyBorad.getInt("ySpeed"));
-			enemyborad.setyA(enemyBorad.getInt("yA"));
-			Log.d("-----------------------------");
-			Log.d(enemyborad.toString());
-			game.enemyborad = enemyborad;
-			
-			JSONObject boardPropsmap = gameObject.getJSONObject("boardPropsmap");
-			Map<Integer,BoardProps> boardPropsmaps =new HashMap<Integer,BoardProps>();
-			Iterator entries = boardPropsmap.entrySet().iterator();
-			while(entries.hasNext()) {
-				Map.Entry entry = (Map.Entry) entries.next();
-				String index =(String) entry.getKey();
-				String s = boardPropsmap.getString(index);
-				JSONObject boardPropsObject = JSONObject.fromObject(s);
-				Log.d("--------------------------------");
-				Log.d("index="+index+",s="+s);
-				BoardProps boardProps = new BoardProps();
-				boardProps.setPropsId(boardPropsObject.getString("propsId"));
-				boardProps.setPropsName(boardPropsObject.getString("propsName"));
-				boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
-				boardPropsmaps.put(Integer.parseInt(index), boardProps);
-			}
-			game.boardPropsmap = boardPropsmaps;
-			
-			return game;
-		}else if("Room".equals(superName)){ //房间
-			try {
-				Room room = new Room();
-				RoomInfo roomInfo = new RoomInfo();
-				JSONObject rInfo = jObject.getJSONObject("data").getJSONObject("roomInfo");
-				roomInfo.roomId = rInfo.getString("roomId");
-				roomInfo.createRoomTime = new SimpleDateFormat("YYYY-DD-MM hh:mm:ss").parse(rInfo.getString("createRoomTime"));
-				roomInfo.roomType = rInfo.getString("roomType");
-				roomInfo.RoomPeopleCount = rInfo.getInt("roomPeopleCount");
-				roomInfo.RoomState = rInfo.getInt("roomState");
-				roomInfo.RoomCreateTime = !rInfo.getString("roomCreateTime").equals("")?new SimpleDateFormat("YYYY-DD-MM hh:mm:ss").parse(rInfo.getString("roomCreateTime")):null;
-				roomInfo.roomPLevel = rInfo.getInt("roomPLevel");
-				roomInfo.endOfLoadingGame = rInfo.getInt("endOfLoadingGame");
-				room.roomInfo = roomInfo;
-				JSONObject pMap = jObject.getJSONObject("data").getJSONObject("playermap");
-				Map<Player,Integer> playermap = new HashMap<Player,Integer>();
-				Iterator entries = pMap.entrySet().iterator();
+		//过滤器
+		if(filtJsonStr(str.trim())) {
+			JSONObject jObject = JSONObject.fromObject(str.trim());
+			String className = jObject.getString("className");
+			String superName = jObject.getString("superName");
+			if("Player".equals(className)) {
+				Player player = new Player();
+				player.setPlayerName(jObject.getJSONObject("data").getString("playerName"));
+				player.setPassword(jObject.getJSONObject("data").getString("password"));
+				player.setLoginState(Integer.parseInt(jObject.getJSONObject("data").getString("loginState")));
+				player.setPlayerNo(Integer.parseInt(jObject.getJSONObject("data").getString("playerNo")));
+				player.setClientId(jObject.getJSONObject("data").getString("clientId"));
+				return player;
+			}else if("Info".equals(className)){
+				Info info = new Info();
+				info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
+				info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
+				System.out.println(info.getHeadInfo()+","+info.getDataInfo());
+				return info;
+			}else if("Game".equals(className)){//游戏数据参数
+				Game game = new Game();
+				JSONObject gameObject = jObject.getJSONObject("data");
+				Log.d("-----------------------------");
+				JSONArray ballList = gameObject.getJSONArray("ball_list");
+				List<Ball> balls = new ArrayList<Ball>();
+				for(int i=0;i<ballList.size();i++) {
+					Ball ball = new Ball();
+					JSONObject object =  ballList.getJSONObject(i);
+					ball.setD(object.getInt("d"));
+					ball.setBx(object.getDouble("bx"));
+					ball.setBy(object.getDouble("by"));
+					ball.setySpeed(object.getDouble("ySpeed"));
+					ball.setxSpeed(object.getDouble("xSpeed"));
+					ball.setxA(object.getDouble("xA"));
+					ball.setyA(object.getDouble("yA"));
+					ball.setDegree(object.getDouble("degree"));
+					System.out.println(ball.toString());
+					balls.add(ball);
+				}
+				game.ball_list = balls;
+				Log.d("-----------------------------");
+				
+				JSONArray myBrickListObject = gameObject.getJSONArray("myBrickList");
+				List<Brick> myBrickList = new ArrayList<Brick>();  
+				for(int i=0;i<myBrickListObject.size();i++) {
+					Brick brick = new Brick();
+					JSONObject object = myBrickListObject.getJSONObject(i);
+					brick.setHeight(object.getInt("height"));
+					brick.setWidth(object.getInt("width"));
+					brick.setLocX(object.getDouble("locX"));
+					brick.setLocY(object.getDouble("locY"));
+					brick.setbPropsId(object.getString("bPropsId"));
+					brick.setHardness(object.getInt("hardness"));
+					System.out.println(brick.toString());
+					myBrickList.add(brick);
+				}  
+				game.myBrickList = myBrickList;
+				Log.d("-----------------------------");
+				
+				JSONArray enemyBrickListObject = gameObject.getJSONArray("enemyBrickList");
+				List<Brick> enemyBrickList = new ArrayList<Brick>();  
+				for(int i=0;i<enemyBrickListObject.size();i++) {
+					Brick brick = new Brick();
+					JSONObject object = enemyBrickListObject.getJSONObject(i);
+					brick.setHeight(object.getInt("height"));
+					brick.setWidth(object.getInt("width"));
+					brick.setLocX(object.getDouble("locX"));
+					brick.setLocY(object.getDouble("locY"));
+					brick.setbPropsId(object.getString("bPropsId"));
+					brick.setHardness(object.getInt("hardness"));
+					System.out.println(brick.toString());
+					enemyBrickList.add(brick);
+				}  
+				game.enemyBrickList = enemyBrickList;
+				
+				JSONObject myBoard = gameObject.getJSONObject("myborad");
+				Board myboard = new Board();
+				myboard.setWidth(myBoard.getInt("width"));
+				myboard.setHeight(myBoard.getInt("height"));
+				myboard.setLocX(myBoard.getDouble("locX"));
+				myboard.setLocY(myBoard.getDouble("locY"));
+				myboard.setySpeed(myBoard.getInt("ySpeed"));
+				myboard.setyA(myBoard.getInt("yA"));
+				Log.d("-----------------------------");
+				Log.d(myboard.toString());
+				game.myborad = myboard;
+				
+				JSONObject enemyBorad = gameObject.getJSONObject("enemyborad");
+				Board enemyborad = new Board();
+				enemyborad.setWidth(enemyBorad.getInt("width"));
+				enemyborad.setHeight(enemyBorad.getInt("height"));
+				enemyborad.setLocX(enemyBorad.getDouble("locX"));
+				enemyborad.setLocY(enemyBorad.getDouble("locY"));
+				enemyborad.setySpeed(enemyBorad.getInt("ySpeed"));
+				enemyborad.setyA(enemyBorad.getInt("yA"));
+				Log.d("-----------------------------");
+				Log.d(enemyborad.toString());
+				game.enemyborad = enemyborad;
+				
+				JSONObject boardPropsmap = gameObject.getJSONObject("boardPropsmap");
+				Map<Integer,BoardProps> boardPropsmaps =new HashMap<Integer,BoardProps>();
+				Iterator entries = boardPropsmap.entrySet().iterator();
 				while(entries.hasNext()) {
 					Map.Entry entry = (Map.Entry) entries.next();
-					String string = (String) entry.getKey();
-					System.out.println("string="+string);
-					String jsonStr = getJsonByString(string,"Player");
-//					System.out.println(jsonStr);
-					JSONObject pj = JSONObject.fromObject(jsonStr);
-					JSONObject playerJb = pj.getJSONObject("Player");
-					Player player = new Player();
-					player.clientId = playerJb.getString("clientId");
-					player.playerNo = playerJb.getInt("playerNo");
-					JSONObject djmapJ = playerJb.getJSONObject("djmap");
-					Iterator entries2 = djmapJ.entrySet().iterator();
-					Map<String,Integer> djmap = new HashMap<String, Integer>();
-					while(entries2.hasNext()) {
-						Map.Entry entry2 = (Map.Entry) entries2.next();
-						String pId = (String) entry.getKey();
-						int pos = (Integer) entry.getValue();
-//						System.out.println("pId="+pId);
-						djmap.put(pId,pos);
-					}
-					player.djmap = djmap;
-					player.playerName = playerJb.getString("playerName").equals("")?"":playerJb.getString("playerName");
-					player.loginState = Integer.parseInt(playerJb.getString("loginState"));
-//					System.out.println(player.toString());
-					int t = (Integer) entry.getValue();
-//					System.out.println(t);
-					playermap.put(player, t);
+					String index =(String) entry.getKey();
+					String s = boardPropsmap.getString(index);
+					JSONObject boardPropsObject = JSONObject.fromObject(s);
+					Log.d("--------------------------------");
+					Log.d("index="+index+",s="+s);
+					BoardProps boardProps = new BoardProps();
+					boardProps.setPropsId(boardPropsObject.getString("propsId"));
+					boardProps.setPropsName(boardPropsObject.getString("propsName"));
+					boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
+					boardPropsmaps.put(Integer.parseInt(index), boardProps);
 				}
-				room.playermap = playermap;
-				JSONObject rRule = jObject.getJSONObject("data").getJSONObject("roomRule");
-				RoomRule roomRule = new RoomRule();
-				roomRule.RoomXXRule = rRule.getInt("roomXXRule");
-				roomRule.RoomCostCardCount = rRule.getInt("roomCostCardCount");
-				room.roomRule = roomRule;
-				return room;
-			} catch (ParseException e) {
-				e.printStackTrace();
-				System.out.println("日期string转到data异常");
+				game.boardPropsmap = boardPropsmaps;
+				
+				return game;
+			}else if("Room".equals(superName)){ //房间
+				try {
+					Room room = new Room();
+					RoomInfo roomInfo = new RoomInfo();
+					JSONObject rInfo = jObject.getJSONObject("data").getJSONObject("roomInfo");
+					roomInfo.roomId = rInfo.getString("roomId");
+					roomInfo.createRoomTime = new SimpleDateFormat("YYYY-DD-MM hh:mm:ss").parse(rInfo.getString("createRoomTime"));
+					roomInfo.roomType = rInfo.getString("roomType");
+					roomInfo.RoomPeopleCount = rInfo.getInt("roomPeopleCount");
+					roomInfo.RoomState = rInfo.getInt("roomState");
+					roomInfo.RoomCreateTime = !rInfo.getString("roomCreateTime").equals("")?new SimpleDateFormat("YYYY-DD-MM hh:mm:ss").parse(rInfo.getString("roomCreateTime")):null;
+					roomInfo.roomPLevel = rInfo.getInt("roomPLevel");
+					roomInfo.endOfLoadingGame = rInfo.getInt("endOfLoadingGame");
+					room.roomInfo = roomInfo;
+					JSONObject pMap = jObject.getJSONObject("data").getJSONObject("playermap");
+					Map<Player,Integer> playermap = new HashMap<Player,Integer>();
+					Iterator entries = pMap.entrySet().iterator();
+					while(entries.hasNext()) {
+						Map.Entry entry = (Map.Entry) entries.next();
+						String string = (String) entry.getKey();
+						System.out.println("string="+string);
+						String jsonStr = getJsonByString(string,"Player");
+//					System.out.println(jsonStr);
+						JSONObject pj = JSONObject.fromObject(jsonStr);
+						JSONObject playerJb = pj.getJSONObject("Player");
+						Player player = new Player();
+						player.clientId = playerJb.getString("clientId");
+						player.playerNo = playerJb.getInt("playerNo");
+						JSONObject djmapJ = playerJb.getJSONObject("djmap");
+						Iterator entries2 = djmapJ.entrySet().iterator();
+						Map<String,Integer> djmap = new HashMap<String, Integer>();
+						while(entries2.hasNext()) {
+							Map.Entry entry2 = (Map.Entry) entries2.next();
+							String pId = (String) entry.getKey();
+							int pos = (Integer) entry.getValue();
+//						System.out.println("pId="+pId);
+							djmap.put(pId,pos);
+						}
+						player.djmap = djmap;
+						player.playerName = playerJb.getString("playerName").equals("")?"":playerJb.getString("playerName");
+						player.loginState = Integer.parseInt(playerJb.getString("loginState"));
+//					System.out.println(player.toString());
+						int t = (Integer) entry.getValue();
+//					System.out.println(t);
+						playermap.put(player, t);
+					}
+					room.playermap = playermap;
+					JSONObject rRule = jObject.getJSONObject("data").getJSONObject("roomRule");
+					RoomRule roomRule = new RoomRule();
+					roomRule.RoomXXRule = rRule.getInt("roomXXRule");
+					roomRule.RoomCostCardCount = rRule.getInt("roomCostCardCount");
+					room.roomRule = roomRule;
+					return room;
+				} catch (ParseException e) {
+					e.printStackTrace();
+					System.out.println("日期string转到data异常");
+				}
+				return null;
+			}else {
+				return null;
 			}
-			return null;
+			
 		}else {
 			return null;
 		}
