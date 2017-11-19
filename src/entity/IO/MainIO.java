@@ -58,7 +58,8 @@ public class MainIO {
 	
 	public Socket clientSocket;
 	public Runnable send;
-	public Runnable receive;
+//	public Runnable receive;
+	public Thread receive;
 	public Thread heart_thread;
 	public OutputStream os;
 	public InputStream is;
@@ -272,11 +273,12 @@ public class MainIO {
 						Room room = GameData.getSingleton().roommap.get(roomType).get(roomId);
 						room.roomInfo.endOfLoadingGame++;
 						System.out.println("num="+room.roomInfo.endOfLoadingGame);
+						Log.d("-----------------------------------------ttttt");
 						if(room.roomInfo.endOfLoadingGame == RoomTools.getRoomPeopleNumByRoomType(roomType)) {
 							//改变房间内所有玩家的状态
 							DataTransmitTools.changeRoomAllPlayersState(room,RoomConfig.gaming, ClientConfig.GAMESTART, ClientConfig.gaming);
 							//开启房间的数据线程
-							singleExecutor.excute(new roomThread(room));
+//							singleExecutor.excute(new roomThread(room));
 							DataTransmitTools.sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
 						}
 					}else if(commandId == CommandID.DisConnnect) {//断开连接协议
@@ -295,6 +297,10 @@ public class MainIO {
 						GameData.getSingleton().mainiomap.remove(clientId);
 						//关闭线程
 						ThreadTools.remove(clientId);
+					}else if(commandId == CommandID.GameData) {//游戏数据
+						
+						Info info = (Info) JsonTools.parseJson(dataInfo);
+						System.out.println("iioooioioioooooooi="+info.dataInfo);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

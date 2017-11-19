@@ -18,5 +18,5 @@ public class CommandID {
 	public final static int WaitOtherPeople = 0x0013;//等待其他玩家
 	public final static int GameStart = 0x0014;//游戏开始
 	public final static int DisConnnect = 0x0015;//断开连接
-	
+	public final static int GameData = 0x0016;//游戏数据
 }
