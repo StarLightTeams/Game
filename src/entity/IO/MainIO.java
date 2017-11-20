@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -28,9 +30,12 @@ import entity.client.ClientData;
 import entity.info.Info;
 import entity.player.Player;
 import entity.rooms.Room;
+import gameType.chuachua.entity.Board;
+import gameType.chuachua.entity.Game;
 import main.TimeServerHandlerExecute;
 import module.DbOperator;
 import rule.agreement.ConnectCommand;
+import rule.agreement.GameDataCommand;
 import rule.agreement.GameStartCommand;
 import rule.agreement.GuestLoginCommand;
 import rule.agreement.HeartCommand;
@@ -215,12 +220,14 @@ public class MainIO {
 								ClientTools.setClientPlayer(Thread.currentThread().getName(), player);
 								Log.d(clientSocket.toString());
 								//发送登录成功
-								System.out.println("JsonTools.getString(new Info(\"登录成功\"))="+JsonTools.getString(new Info("登录成功")));
+//								System.out.println("JsonTools.getString(new Info(\"登录成功\"))="+JsonTools.getString(new Info("登录成功")));
 								sendMessage(new LoginCommand(), JsonTools.getString(new Info("登录成功")));
+								Log.d("------------------------------------------------------------------");
 							}else {
 								//此用户不存在
 								//发送登录失败
 								sendMessage(new LoginCommand(),JsonTools.getString(new Info("登录失败")));
+								Log.d("------------------------------------------------------------------");
 							}
 						}
 					}else if(commandId == CommandID.LoginOut) {//退出登录协议
@@ -263,8 +270,11 @@ public class MainIO {
 						gameTools = new GameTools(GameData.getSingleton());
 						Info info =(Info) JsonTools.parseJson(dataInfo);
 						gameTools.gamePreparing(info.dataInfo,MainIO.this,singleExecutor);
+						Log.d("--------------------------------------------------------------------");
 					}else if(commandId == CommandID.GameLoading) {//游戏加载
+						System.out.println("GameLoading----------------="+dataInfo);
 						Info info =(Info) JsonTools.parseJson(dataInfo);
+						System.out.println("--------------");
 						Map<String, String> maps = JsonTools.parseData(info.dataInfo);
 						String roomType = maps.get("roomType");
 						String roomId = maps.get("roomId");
@@ -273,13 +283,13 @@ public class MainIO {
 						Room room = GameData.getSingleton().roommap.get(roomType).get(roomId);
 						room.roomInfo.endOfLoadingGame++;
 						System.out.println("num="+room.roomInfo.endOfLoadingGame);
-						Log.d("-----------------------------------------ttttt");
 						if(room.roomInfo.endOfLoadingGame == RoomTools.getRoomPeopleNumByRoomType(roomType)) {
 							//改变房间内所有玩家的状态
 							DataTransmitTools.changeRoomAllPlayersState(room,RoomConfig.gaming, ClientConfig.GAMESTART, ClientConfig.gaming);
 							//开启房间的数据线程
 //							singleExecutor.excute(new roomThread(room));
-							DataTransmitTools.sendAllClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
+							DataTransmitTools.sendClientsMessage(room.playermap, new GameStartCommand(), JsonTools.getString(new Info("开始游戏")), singleExecutor);
+							Log.d("---------------------------------------------------------------------------------");
 						}
 					}else if(commandId == CommandID.DisConnnect) {//断开连接协议
 						Info info = (Info) JsonTools.parseJson(dataInfo);
@@ -298,9 +308,37 @@ public class MainIO {
 						//关闭线程
 						ThreadTools.remove(clientId);
 					}else if(commandId == CommandID.GameData) {//游戏数据
-						
 						Info info = (Info) JsonTools.parseJson(dataInfo);
 						System.out.println("iioooioioioooooooi="+info.dataInfo);
+						Map<String, String> maps =JsonTools.pasreObjectData(info.dataInfo);
+						String roomType = maps.get("roomType");
+						String roomId = maps.get("roomId");
+						String clientId = maps.get("clientName");
+						String gameData = maps.get("Game");
+						CommonTools.listMaps(maps);
+						Game game = (Game) JsonTools.parseJson(gameData);
+						//转换板的位置
+						Board board = game.myborad;
+						game.setMyborad(game.enemyborad);
+						game.setEnemyborad(board);
+						
+						System.out.println(game.toString());
+						//找到房间的其它人
+						List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
+						for(Player p :players) {
+							System.out.println(p.toString());
+						}
+//						Map<String,String> mmaps = new HashMap<String, String>();
+//						mmaps.put("roomType", roomType);
+//						mmaps.put("roomId", roomId);
+//						mmaps.put("clientId", clientId);
+//						mmaps.put("Game",JsonTools.getString(game));
+//						//给房间的其它人发送信息                 
+//						DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
+						
+//						singleExecutor.excute(new roomThread(roomId,roomType,clientId));
+						
+						Log.d("----------------------------数据处理----------------------------------");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -316,10 +354,15 @@ public class MainIO {
 		String roomId;
 		String roomType;
 		Room room;
+		String clientId;
 		public roomThread() {
 			
 		}
-		
+		public roomThread(String roomId,String roomType,String clientId) {
+			this.roomId = roomId;
+			this.roomType = roomType;
+			this.clientId = clientId;
+		}
 		public roomThread(String roomId,String roomType) {
 			this.roomId = roomId;
 			this.roomType = roomType;
@@ -334,7 +377,18 @@ public class MainIO {
 				Thread.currentThread().setName(roomId);
 				//Log.d("["+Thread.currentThread().getName()+"]="+new String("房间线程开启"));
 				if(roomType == RoomTools.createRoomID(2, GameConfig.doubleCommonGame)) {
-					
+					//找到房间的其它人
+					List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
+					for(Player p :players) {
+						System.out.println(p.toString());
+					}
+//					Map<String,String> mmaps = new HashMap<String, String>();
+//					mmaps.put("roomType", roomType);
+//					mmaps.put("roomId", roomId);
+//					mmaps.put("clientId", clientId);
+//					mmaps.put("Game",JsonTools.getString(game));
+//					//给房间的其它人发送信息                 
+//					DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
 				}else if(roomType == RoomTools.createRoomID(2, GameConfig.doubleSpecialGame)) {
 					
 				}else if(roomType == RoomTools.createRoomID(4, GameConfig.fourCommonGame)) {

@@ -91,7 +91,7 @@ public class GameTools {
 							System.out.println("验证信息:==========="+info.toString());
 							if(info.headInfo.equals("验证成功")) {
 								//给房间里所有玩家发送验证成功
-								DataTransmitTools.sendAllClientsMessage(players,new VerifyStateCommand(),JsonTools.getString(info),singleExecutor);
+								DataTransmitTools.sendClientsMessage(players,new VerifyStateCommand(),JsonTools.getString(info),singleExecutor);
 							}else if(info.headInfo.equals("验证失败")) {
 								mainIo.sendMessage(new VerifyStateErrCommand(), JsonTools.getString(info));
 							}

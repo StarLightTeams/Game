@@ -75,6 +75,12 @@ public class Ball {
 	}
 	public void setDegree(double degree) {
 		this.degree = degree;
+	}
+	@Override
+	public String toString() {
+		return "Ball [d=" + d + ", bx=" + bx + ", by=" + by + ", ySpeed=" + ySpeed + ", xSpeed=" + xSpeed + ", xA=" + xA
+				+ ", yA=" + yA + ", degree=" + degree + "]";
 	}	
+	
 	
 }

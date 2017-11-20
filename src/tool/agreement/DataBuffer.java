@@ -246,6 +246,7 @@ public class DataBuffer {
 	}
 	public char[] getChars (byte[] bytes) {
 	      Charset cs = Charset.forName ("UTF-8");
+	      System.out.println("bytes.length="+bytes.length);
 	      ByteBuffer bb = ByteBuffer.allocate (bytes.length);
 	      bb.put (bytes);
 	                 bb.flip ();

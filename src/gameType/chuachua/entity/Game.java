@@ -54,6 +54,10 @@ public class Game {
 	public void setBoardPropsmap(Map<Integer, BoardProps> boardPropsmap) {
 		this.boardPropsmap = boardPropsmap;
 	}
-	
+	@Override
+	public String toString() {
+		return "Game [ball_list=" + ball_list + ", myBrickList=" + myBrickList + ", enemyBrickList=" + enemyBrickList
+				+ ", myborad=" + myborad + ", enemyborad=" + enemyborad + ", boardPropsmap=" + boardPropsmap + "]";
+	}
 	
 }

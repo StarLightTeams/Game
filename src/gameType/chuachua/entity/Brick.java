@@ -55,4 +55,10 @@ public class Brick {
 	public void setHardness(int hardness) {
 		this.hardness = hardness;
 	}
+	@Override
+	public String toString() {
+		return "Brick [height=" + height + ", width=" + width + ", locX=" + locX + ", locY=" + locY + ", bPropsId="
+				+ bPropsId + ", hardness=" + hardness + "]";
+	}
+	
 }

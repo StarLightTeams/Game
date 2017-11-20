@@ -1,7 +1,9 @@
 package tool;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import data.GameData;
@@ -18,17 +20,60 @@ import main.TimeServerHandlerExecute;
 public class DataTransmitTools {
 	
 	/**
-	 * 给所有玩家传输数据
+	 * 给玩家传输数据
 	 * @param players
 	 * @param icommand
 	 * @param str
 	 * @param singleExecutor
 	 */
-	public static synchronized void sendAllClientsMessage(Map<Player,Integer> players,ICommand icommand,String str,TimeServerHandlerExecute singleExecutor) {
-		Iterator entries = players.entrySet().iterator(); 
-		while (entries.hasNext()) {
-			Map.Entry entry = (Map.Entry) entries.next();
-			Player player = (Player) entry.getKey();
+	public synchronized static void sendClientsMessage(List<Player> players,ICommand icommand,String str,TimeServerHandlerExecute singleExecutor) {
+		for(int i=0;i<players.size();i++) {
+			Player player = players.get(i);
+			ClientData clientData = GameData.getSingleton().clientmap.get(player.clientId);
+			Socket cSocket = clientData.getClientSocket();
+			MainIO mainIo = GameData.getSingleton().mainiomap.get(player.clientId);
+			mainIo.sendMessage(icommand, str);
+		}
+	}
+	
+	/**
+	 * 找到除自己以外其它玩家
+	 * @param roomId
+	 * @param roomType
+	 * @param clientId
+	 * @return
+	 */
+	public synchronized static List<Player> getOtherPlayerInRoom(String roomId,String roomType,String clientId){
+		List<Player> p = new ArrayList<Player>();
+		System.out.println("========"+GameData.getSingleton().roommap.get(roomType).get(roomId).toString());
+		Map<Player, Integer> players = GameData.getSingleton().roommap.get(roomType).get(roomId).playermap;
+		CommonTools.listMaps(players);
+//		for(Player player :players.keySet()) {
+//			if(!player.clientId.equals(clientId)) {
+//				p.add(player);
+//			}
+//		}
+		return p;
+	}
+	
+	/**
+	 * 给玩家传输数据
+	 * @param players
+	 * @param icommand
+	 * @param str
+	 * @param singleExecutor
+	 */                                                                                                                
+	public static void sendClientsMessage(Map<Player,Integer> players,ICommand icommand,String str,TimeServerHandlerExecute singleExecutor) {
+//		Iterator entries = players.entrySet().iterator(); 
+//		while (entries.hasNext()) {
+//			Map.Entry entry = (Map.Entry) entries.next();
+//			Player player = (Player) entry.getKey();
+//			ClientData clientData = GameData.getSingleton().clientmap.get(player.clientId);
+//			Socket cSocket = clientData.getClientSocket();
+//			MainIO mainIo = GameData.getSingleton().mainiomap.get(player.clientId);
+//			mainIo.sendMessage(icommand, str);
+//		}
+		for(Player player:players.keySet()) {
 			ClientData clientData = GameData.getSingleton().clientmap.get(player.clientId);
 			Socket cSocket = clientData.getClientSocket();
 			MainIO mainIo = GameData.getSingleton().mainiomap.get(player.clientId);
