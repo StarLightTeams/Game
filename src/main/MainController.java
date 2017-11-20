@@ -78,10 +78,10 @@ public class MainController {
 				if (clientportdata.judgePortCount()) {
 					g.userclientmap.put(ip, clientportdata);
 					if (ClientTools.addClient(socket)) {
-						Log.d("客户端:" + ip + ":" + port + "添加成功");
+						Log.d("客户端:" + ip + "-" + port + "添加成功");
 						Log.d("正在运行的客户端:");
 						for (Map.Entry<String, ClientData> entry : g.clientmap.entrySet()) {
-							Log.d("客户端:" + entry.getValue().getIp() + ":" + entry.getValue().getPort());
+							Log.d("客户端:" + entry.getValue().getIp() + "-" + entry.getValue().getPort());
 						}
 						Log.d("----------------------------------");
 
@@ -89,24 +89,24 @@ public class MainController {
 						ClientTools.initClientThreadName(socket);
 						// 开启接收,发送线程
 						MainIO mainIO = null;
-						if(g.mainiomap.containsKey(ip+":"+port)) {
-							mainIO = g.mainiomap.get(ip+":"+port);
+						if(g.mainiomap.containsKey(ip+"-"+port)) {
+							mainIO = g.mainiomap.get(ip+"-"+port);
 						}else {
-							mainIO = new MainIO(g.clientmap.get(ip + ":" + port).getClientSocket(),singleExecutor);
+							mainIO = new MainIO(g.clientmap.get(ip + "-" + port).getClientSocket(),singleExecutor);
 						}
 						//开启心跳线程
 //						mainIO.startHeartThread();
 						Map<String,String> maps = new HashMap<String, String>();
 						maps.put("cIp", ip);
 						maps.put("cPort", port+"");
-						if(!g.mainiomap.containsKey(ip+":"+port)) {
-							g.mainiomap.put(ip + ":" + port, mainIO);
+						if(!g.mainiomap.containsKey(ip+"-"+port)) {
+							g.mainiomap.put(ip + "-" + port, mainIO);
 						}
 						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("连接成功",JsonTools.getData(maps))));
 						mainIO.receiveMessage();
 
 					} else {
-						Log.d("客户端:" + ip + ":" + port + "添加失败");
+						Log.d("客户端:" + ip + "-" + port + "添加失败");
 					}
 				} else {
 					Log.d("客户端:" + ip + "用户达到上限");

@@ -172,6 +172,7 @@ public class MainIO {
 					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
 					int len=is.read(b);
+					System.out.println("thiscccccccccccccccccccccccc="+Thread.currentThread().getName());
 					System.out.println("len======="+len);
 //					System.out.println("b="+new String(b));
 					DataBuffer data = getAgreeMentMessage(b);
@@ -309,33 +310,37 @@ public class MainIO {
 						ThreadTools.remove(clientId);
 					}else if(commandId == CommandID.GameData) {//游戏数据
 						Info info = (Info) JsonTools.parseJson(dataInfo);
-						System.out.println("iioooioioioooooooi="+info.dataInfo);
+//						System.out.println("iioooioioioooooooi="+info.dataInfo);
 						Map<String, String> maps =JsonTools.pasreObjectData(info.dataInfo);
 						String roomType = maps.get("roomType");
 						String roomId = maps.get("roomId");
 						String clientId = maps.get("clientName");
+						System.out.println("clientId="+clientId);
 						String gameData = maps.get("Game");
 						CommonTools.listMaps(maps);
 						Game game = (Game) JsonTools.parseJson(gameData);
+//						System.out.println("game.myborad="+game.myborad.toString());
+//						System.out.println("game.enemyborad="+game.enemyborad.toString());
 						//转换板的位置
-						Board board = game.myborad;
-						game.setMyborad(game.enemyborad);
-						game.setEnemyborad(board);
+//						game.enemyborad.setLocX(game.myborad.locX);
+//						System.out.println("game.myborad111111="+game.myborad.toString());
+//						System.out.println("game.enemyborad11111="+game.enemyborad.toString());
 						
-						System.out.println(game.toString());
+//						System.out.println(game.toString());
 						//找到房间的其它人
 						List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
 						for(Player p :players) {
 							System.out.println(p.toString());
 						}
-//						Map<String,String> mmaps = new HashMap<String, String>();
-//						mmaps.put("roomType", roomType);
-//						mmaps.put("roomId", roomId);
-//						mmaps.put("clientId", clientId);
-//						mmaps.put("Game",JsonTools.getString(game));
-//						//给房间的其它人发送信息                 
-//						DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
+						Map<String,String> mmaps = new HashMap<String, String>();
+						mmaps.put("roomType", roomType);
+						mmaps.put("roomId", roomId);
+						mmaps.put("clientName", clientId);
+						mmaps.put("Game",JsonTools.getString(game));
+						CommonTools.listMaps(maps);
 						
+						//给房间的其它人发送信息                 
+						DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
 //						singleExecutor.excute(new roomThread(roomId,roomType,clientId));
 						
 						Log.d("----------------------------数据处理----------------------------------");

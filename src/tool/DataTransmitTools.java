@@ -29,10 +29,18 @@ public class DataTransmitTools {
 	public synchronized static void sendClientsMessage(List<Player> players,ICommand icommand,String str,TimeServerHandlerExecute singleExecutor) {
 		for(int i=0;i<players.size();i++) {
 			Player player = players.get(i);
+			System.out.println("playername11="+player.playerName);
 			ClientData clientData = GameData.getSingleton().clientmap.get(player.clientId);
 			Socket cSocket = clientData.getClientSocket();
 			MainIO mainIo = GameData.getSingleton().mainiomap.get(player.clientId);
+			System.out.println("mainIooooo="+player.clientId);
 			mainIo.sendMessage(icommand, str);
+//			try {
+//				Thread.sleep(4000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 	
@@ -43,16 +51,18 @@ public class DataTransmitTools {
 	 * @param clientId
 	 * @return
 	 */
-	public synchronized static List<Player> getOtherPlayerInRoom(String roomId,String roomType,String clientId){
+	public static List<Player> getOtherPlayerInRoom(String roomId,String roomType,String clientId){
 		List<Player> p = new ArrayList<Player>();
-		System.out.println("========"+GameData.getSingleton().roommap.get(roomType).get(roomId).toString());
-		Map<Player, Integer> players = GameData.getSingleton().roommap.get(roomType).get(roomId).playermap;
+		System.out.println("roomId="+roomId+",roomType="+roomType+",clientId="+clientId);
+		Room room = GameData.getSingleton().roommap.get(roomType).get(roomId);
+		Map<Player, Integer> players = room.playermap;
 		CommonTools.listMaps(players);
-//		for(Player player :players.keySet()) {
-//			if(!player.clientId.equals(clientId)) {
-//				p.add(player);
-//			}
-//		}
+		for(Player player :players.keySet()) {
+			if(!player.clientId.equals(clientId)) {
+				p.add(player);
+				System.out.println("playername="+player.playerName);
+			}
+		}
 		return p;
 	}
 	

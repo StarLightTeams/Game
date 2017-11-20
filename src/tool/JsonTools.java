@@ -313,9 +313,9 @@ public class JsonTools {
 				JSONObject boardPropsmap = gameObject.getJSONObject("boardPropsmap");
 				Map<Integer,BoardProps> boardPropsmaps =new HashMap<Integer,BoardProps>();
 				Iterator entries = boardPropsmap.entrySet().iterator();
-				while(entries.hasNext()) {
-					Map.Entry entry = (Map.Entry) entries.next();
-					String index =(String) entry.getKey();
+				Iterator<String> keys = boardPropsmap.keys();
+				while(keys.hasNext()) {
+					String index =(String) keys.next();
 					String s = boardPropsmap.getString(index);
 					JSONObject boardPropsObject = JSONObject.fromObject(s);
 					Log.d("--------------------------------");
@@ -326,6 +326,20 @@ public class JsonTools {
 					boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
 					boardPropsmaps.put(Integer.parseInt(index), boardProps);
 				}
+				
+//				while(entries.hasNext()) {
+//					Map.Entry entry = (Map.Entry) entries.next();
+//					String index =(String) entry.getKey();
+//					String s = boardPropsmap.getString(index);
+//					JSONObject boardPropsObject = JSONObject.fromObject(s);
+//					Log.d("--------------------------------");
+//					Log.d("index="+index+",s="+s);
+//					BoardProps boardProps = new BoardProps();
+//					boardProps.setPropsId(boardPropsObject.getString("propsId"));
+//					boardProps.setPropsName(boardPropsObject.getString("propsName"));
+//					boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
+//					boardPropsmaps.put(Integer.parseInt(index), boardProps);
+//				}
 				game.boardPropsmap = boardPropsmaps;
 				
 				return game;

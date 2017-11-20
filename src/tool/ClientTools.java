@@ -27,14 +27,14 @@ public class ClientTools {
 	public static boolean addClient(Socket socket) {
 		try {
 			ClientData gameData = new ClientData(socket);
-			String flag = gameData.getIp()+":"+gameData.getPort();
+			String flag = gameData.getIp()+"-"+gameData.getPort();
 			//改变客户端中的状态,未登录
 			gameData.setClientLocState(ClientConfig.NOLOGIN);
 			g.clientmap.put(flag,gameData);
 			GameConfig.serverCount++;
 			return true;
 		}catch(Exception e) {
-			new Exception("客户端"+socket.getInetAddress()+":"+socket.getPort()+"添加失败");
+			new Exception("客户端"+socket.getInetAddress()+"-"+socket.getPort()+"添加失败");
 			return false;
 		}
 	}
@@ -44,7 +44,7 @@ public class ClientTools {
 	 * 	线程ip+:+port+:+1s 1表示服务器 ,2表示客户端 s表示发送 r表示接收
 	 */
 	public static void initClientThreadName(Socket s) {
-		clientThreadName = s.getInetAddress().toString().substring(1)+":"+s.getPort()+":"+"1";
+		clientThreadName = s.getInetAddress().toString().substring(1)+"-"+s.getPort()+"-"+"1";
 		clientThreadRName = clientThreadName+"r";
 		clientThreadSName = clientThreadName+"s";
 	}
@@ -54,8 +54,8 @@ public class ClientTools {
 	 * @param ThreadName
 	 */
 	public static String getKeyByThreadName(String ThreadName) {
-		String[] str = ThreadName.split(":");
-		return str[0]+":"+str[1];
+		String[] str = ThreadName.split("-");
+		return str[0]+"-"+str[1];
 	}
 	
 	/**
