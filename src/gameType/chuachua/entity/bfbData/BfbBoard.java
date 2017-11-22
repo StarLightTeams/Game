@@ -26,6 +26,59 @@ public class BfbBoard {
 		this.ySpeed = bf_ySpeed;
 		this.yA = bf_yA;
 	}
-	
+
+	public double getBf_width() {
+		return bf_width;
+	}
+
+	public void setBf_width(double bf_width) {
+		this.bf_width = bf_width;
+	}
+
+	public double getBf_height() {
+		return bf_height;
+	}
+
+	public void setBf_height(double bf_height) {
+		this.bf_height = bf_height;
+	}
+
+	public double getBf_locX() {
+		return bf_locX;
+	}
+
+	public void setBf_locX(double bf_locX) {
+		this.bf_locX = bf_locX;
+	}
+
+	public double getBf_locY() {
+		return bf_locY;
+	}
+
+	public void setBf_locY(double bf_locY) {
+		this.bf_locY = bf_locY;
+	}
+
+	public double getySpeed() {
+		return ySpeed;
+	}
+
+	public void setySpeed(double ySpeed) {
+		this.ySpeed = ySpeed;
+	}
+
+	public double getyA() {
+		return yA;
+	}
+
+	public void setyA(double yA) {
+		this.yA = yA;
+	}
+
+	@Override
+	public String toString() {
+		return "BfbBoard [bf_width=" + bf_width + ", bf_height=" + bf_height + ", bf_locX=" + bf_locX + ", bf_locY="
+				+ bf_locY + ", ySpeed=" + ySpeed + ", yA=" + yA + "]";
+	}
 	
 }

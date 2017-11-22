@@ -14,6 +14,7 @@ import gameType.chuachua.entity.Board;
 import gameType.chuachua.entity.BoardProps;
 import gameType.chuachua.entity.Brick;
 import gameType.chuachua.entity.Game;
+import gameType.chuachua.entity.bfbData.BfbGame;
 
 public class InitChuaChua {
 	
@@ -27,6 +28,8 @@ public class InitChuaChua {
 		initBoardProps(game);
 		return game;
 	}
+	
+	
 	//
 	public void initHard(){
 		

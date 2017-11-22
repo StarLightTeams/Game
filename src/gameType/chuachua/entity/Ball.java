@@ -28,6 +28,12 @@ public class Ball {
 		this.yA = yA;
 		this.degree = degree;
 	}
+	
+	public void move(double t) {
+		bx = bx+t*xSpeed;
+		by = by+t*ySpeed;
+	}
+	
 	public int getD() {
 		return d;
 	}

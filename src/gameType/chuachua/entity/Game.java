@@ -18,6 +18,21 @@ public class Game {
 	public  Board enemyborad =new Board();
 	//敌方的道具列表
 	public  Map<Integer,BoardProps> boardPropsmap =new HashMap<Integer,BoardProps>();
+	
+	
+	public Game() {
+		super();
+	}
+	public Game(List<Ball> ball_list, List<Brick> myBrickList, List<Brick> enemyBrickList, Board myborad,
+			Board enemyborad, Map<Integer, BoardProps> boardPropsmap) {
+		super();
+		this.ball_list = ball_list;
+		this.myBrickList = myBrickList;
+		this.enemyBrickList = enemyBrickList;
+		this.myborad = myborad;
+		this.enemyborad = enemyborad;
+		this.boardPropsmap = boardPropsmap;
+	}
 	public List<Ball> getBall_list() {
 		return ball_list;
 	}

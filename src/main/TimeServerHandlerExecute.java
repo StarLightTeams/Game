@@ -29,8 +29,9 @@ public class TimeServerHandlerExecute {
 	
 	public TimeServerHandlerExecute(int roomCount) {
 		int maxPoolSize = roomCount*4*2+2;
-		executeor = Executors.newFixedThreadPool(maxPoolSize);
-//		executeor = Executors.newCachedThreadPool();
+//		executeor = Executors.newScheduledThreadPool(maxPoolSize);
+//		executeor = Executors.newFixedThreadPool(maxPoolSize);
+		executeor = Executors.newCachedThreadPool();
 	}
 	
 //	public void excute(Callable<String> task) {

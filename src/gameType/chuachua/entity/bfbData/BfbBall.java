@@ -31,5 +31,73 @@ public class BfbBall {
 		this.degree = degree;
 	}
 
-	
+	public double getBf_d() {
+		return bf_d;
+	}
+
+	public void setBf_d(double bf_d) {
+		this.bf_d = bf_d;
+	}
+
+	public double getBf_bx() {
+		return bf_bx;
+	}
+
+	public void setBf_bx(double bf_bx) {
+		this.bf_bx = bf_bx;
+	}
+
+	public double getBf_by() {
+		return bf_by;
+	}
+
+	public void setBf_by(double bf_by) {
+		this.bf_by = bf_by;
+	}
+
+	public double getySpeed() {
+		return ySpeed;
+	}
+
+	public void setySpeed(double ySpeed) {
+		this.ySpeed = ySpeed;
+	}
+
+	public double getxSpeed() {
+		return xSpeed;
+	}
+
+	public void setxSpeed(double xSpeed) {
+		this.xSpeed = xSpeed;
+	}
+
+	public double getxA() {
+		return xA;
+	}
+
+	public void setxA(double xA) {
+		this.xA = xA;
+	}
+
+	public double getyA() {
+		return yA;
+	}
+
+	public void setyA(double yA) {
+		this.yA = yA;
+	}
+
+	public double getDegree() {
+		return degree;
+	}
+
+	public void setDegree(double degree) {
+		this.degree = degree;
+	}
+
+	@Override
+	public String toString() {
+		return "BfbBall [bf_d=" + bf_d + ", bf_bx=" + bf_bx + ", bf_by=" + bf_by + ", ySpeed=" + ySpeed + ", xSpeed="
+				+ xSpeed + ", xA=" + xA + ", yA=" + yA + ", degree=" + degree + "]";
+	}
 }

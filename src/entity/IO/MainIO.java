@@ -30,8 +30,14 @@ import entity.client.ClientData;
 import entity.info.Info;
 import entity.player.Player;
 import entity.rooms.Room;
+import gameType.chuachua.entity.Ball;
 import gameType.chuachua.entity.Board;
+import gameType.chuachua.entity.Brick;
 import gameType.chuachua.entity.Game;
+import gameType.chuachua.entity.bfbData.BfbBall;
+import gameType.chuachua.entity.bfbData.BfbBoard;
+import gameType.chuachua.entity.bfbData.BfbBrick;
+import gameType.chuachua.tools.ConverTool;
 import main.TimeServerHandlerExecute;
 import module.DbOperator;
 import rule.agreement.ConnectCommand;
@@ -94,7 +100,7 @@ public class MainIO {
 	 * 发送信息
 	 * @param str
 	 */
-	public synchronized void sendMessage(ICommand iCommand,String str) {
+	public void sendMessage(ICommand iCommand,String str) {
 //		send = new FactoryThread().newThread(new sendThread(iCommand,str),ClientTools.clientThreadSName);
 //		send.setUncaughtExceptionHandler(new ThreadException());
 //		send.start();
@@ -110,7 +116,8 @@ public class MainIO {
 //		receive.setUncaughtExceptionHandler(new ThreadException());
 //		receive.start();
 		Runnable receive = new receiveThread(ClientTools.clientThreadRName);
-		singleExecutor.excute(receive);
+//		singleExecutor.excute(receive);
+		new Thread(receive).start();
 	}
 	
 	/**
@@ -132,25 +139,17 @@ public class MainIO {
 			this.str = str;
 			this.iCommand = iCommand;
 		}
-		public synchronized void run() {
-//			while(true) {
-				//传输json数据
-				try {
-					Thread.currentThread().setName(clientThreadRName);
-					DataBuffer data= createAgreeMentMessage(iCommand,str);
-					Log.d("sendMessage = "+str);
-					Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
-					os.write(data.readByte());
-					os.flush();
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-//			}
+		public void run() {
+			Thread.currentThread().setName(clientThreadRName);
+			//传输json数据
+			try {
+				DataBuffer data= createAgreeMentMessage(iCommand,str);
+				Log.d("sendMessage = "+str);
+				Log.d("["+Thread.currentThread().getName()+"]="+new String(iCommand.body));
+				os.write(data.readByte());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -167,9 +166,9 @@ public class MainIO {
 			this.clientThreadRName = clientThreadRName;
 		}
 		public synchronized void run() {
+			Thread.currentThread().setName(clientThreadRName);
 			while(!Thread.currentThread().isInterrupted()) {
 				try {
-					Thread.currentThread().setName(clientThreadRName);
 					byte[] b = new byte[45056];
 					int len=is.read(b);
 					System.out.println("thiscccccccccccccccccccccccc="+Thread.currentThread().getName());
@@ -307,6 +306,7 @@ public class MainIO {
 						mainIo.clientSocket.close();
 						GameData.getSingleton().mainiomap.remove(clientId);
 						//关闭线程
+//						singleExecutor.executeor.shutdown();
 						ThreadTools.remove(clientId);
 					}else if(commandId == CommandID.GameData) {//游戏数据
 						Info info = (Info) JsonTools.parseJson(dataInfo);
@@ -315,6 +315,8 @@ public class MainIO {
 						String roomType = maps.get("roomType");
 						String roomId = maps.get("roomId");
 						String clientId = maps.get("clientName");
+						int gameWidth = Integer.parseInt(maps.get("clientSceenWidth"));
+						int gameHeight = Integer.parseInt(maps.get("clientSceenHeight"));
 						System.out.println("clientId="+clientId);
 						String gameData = maps.get("Game");
 						CommonTools.listMaps(maps);
@@ -327,21 +329,24 @@ public class MainIO {
 //						System.out.println("game.enemyborad11111="+game.enemyborad.toString());
 						
 //						System.out.println(game.toString());
-						//找到房间的其它人
-						List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
-						for(Player p :players) {
-							System.out.println(p.toString());
-						}
-						Map<String,String> mmaps = new HashMap<String, String>();
-						mmaps.put("roomType", roomType);
-						mmaps.put("roomId", roomId);
-						mmaps.put("clientName", clientId);
-						mmaps.put("Game",JsonTools.getString(game));
-						CommonTools.listMaps(maps);
+						roomThread roomExe = new roomThread(roomId,roomType,clientId,game,gameWidth,gameHeight);
+//						new Thread(new roomThread(roomId,roomType,clientId,game,gameWidth,gameHeight)).start();
+						singleExecutor.excute(roomExe);
 						
-						//给房间的其它人发送信息                 
-						DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
-//						singleExecutor.excute(new roomThread(roomId,roomType,clientId));
+//						//找到房间的其它人
+//						List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
+//						for(Player p :players) {
+//							System.out.println(p.toString());
+//						}
+//						Map<String,String> mmaps = new HashMap<String, String>();
+//						mmaps.put("roomType", roomType);
+//						mmaps.put("roomId", roomId);
+//						mmaps.put("clientName", clientId);
+//						mmaps.put("Game",JsonTools.getString(game));
+//						CommonTools.listMaps(maps);
+//						
+//						//给房间的其它人发送信息                 
+//						DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
 						
 						Log.d("----------------------------数据处理----------------------------------");
 					}
@@ -360,13 +365,19 @@ public class MainIO {
 		String roomType;
 		Room room;
 		String clientId;
+		Game game;
+		int gameWidth;
+		int gameHeight;
 		public roomThread() {
 			
 		}
-		public roomThread(String roomId,String roomType,String clientId) {
+		public roomThread(String roomId,String roomType,String clientId,Game game,int gameWidth,int gameHeight) {
 			this.roomId = roomId;
 			this.roomType = roomType;
 			this.clientId = clientId;
+			this.game = game;
+			this.gameWidth = gameWidth;
+			this.gameHeight = gameHeight;
 		}
 		public roomThread(String roomId,String roomType) {
 			this.roomId = roomId;
@@ -378,31 +389,54 @@ public class MainIO {
 			this.roomType = room.roomInfo.roomType;
 		}
 		public synchronized void run() {
-			while(true) {
+//			while(true) {
 				Thread.currentThread().setName(roomId);
-				//Log.d("["+Thread.currentThread().getName()+"]="+new String("房间线程开启"));
-				if(roomType == RoomTools.createRoomID(2, GameConfig.doubleCommonGame)) {
+				Log.d("["+Thread.currentThread().getName()+"]="+new String("房间线程开启"));
+				if(roomType.equals(RoomTools.createRoomType(2, GameConfig.doubleCommonGame))) {
+//					List<BfbBall> BfbBalls = ConverTool.conver_ballList(game.ball_list,gameWidth,gameHeight);
+//					List<Ball> bs = ConverTool.reduction_ballList(BfbBalls, gameType.chuachua.config.GameConfig.WIDTH, gameType.chuachua.config.GameConfig.HEIGHT);
+//					
+//					List<BfbBrick> BfbMyBricks = ConverTool.conver_brickList(game.myBrickList,gameWidth,gameHeight);
+//					List<Brick> myBk = ConverTool.reduction_brickList(BfbMyBricks,gameType.chuachua.config.GameConfig.WIDTH, gameType.chuachua.config.GameConfig.HEIGHT);
+//					
+//					List<BfbBrick> BfbEnemyBricks = ConverTool.conver_brickList(game.enemyBrickList,gameWidth,gameHeight);
+//					List<Brick> enemyBk = ConverTool.reduction_brickList(BfbEnemyBricks,gameType.chuachua.config.GameConfig.WIDTH, gameType.chuachua.config.GameConfig.HEIGHT);
+//					
+//					BfbBoard BfbMyBorad = ConverTool.conver_board(game.myborad,gameWidth,gameHeight);
+//					Board myBd = ConverTool.reduction_board(BfbMyBorad,gameType.chuachua.config.GameConfig.WIDTH, gameType.chuachua.config.GameConfig.HEIGHT);
+//					
+//					BfbBoard BfbEnemyBorad = ConverTool.conver_board(game.enemyborad,gameWidth,gameHeight);
+//					Board enemyBd = ConverTool.reduction_board(BfbEnemyBorad,gameType.chuachua.config.GameConfig.WIDTH, gameType.chuachua.config.GameConfig.HEIGHT);
+//					Game game2 = new Game(bs, myBk, enemyBk, myBd, enemyBd, game.boardPropsmap);
 					//找到房间的其它人
 					List<Player> players = DataTransmitTools.getOtherPlayerInRoom(roomId, roomType, clientId);
 					for(Player p :players) {
 						System.out.println(p.toString());
 					}
-//					Map<String,String> mmaps = new HashMap<String, String>();
-//					mmaps.put("roomType", roomType);
-//					mmaps.put("roomId", roomId);
-//					mmaps.put("clientId", clientId);
-//					mmaps.put("Game",JsonTools.getString(game));
-//					//给房间的其它人发送信息                 
-//					DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
-				}else if(roomType == RoomTools.createRoomID(2, GameConfig.doubleSpecialGame)) {
+					//球的移动
+					for(int i=0;i<game.ball_list.size();i++) {
+						Ball ball = game.ball_list.get(i);
+						ball.move(1);
+					}
+					//球碰撞
 					
-				}else if(roomType == RoomTools.createRoomID(4, GameConfig.fourCommonGame)) {
+					Map<String,String> mmaps = new HashMap<String, String>();
+					mmaps.put("roomType", roomType);
+					mmaps.put("roomId", roomId);
+					mmaps.put("clientName", clientId);
+					mmaps.put("Game",JsonTools.getString(game));
+					//给房间的其它人发送信息                 
+					DataTransmitTools.sendClientsMessage(players, new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))), singleExecutor);
+				
+				}else if(roomType.equals(RoomTools.createRoomType(2, GameConfig.doubleSpecialGame))) {
 					
-				}else if(roomType == RoomTools.createRoomID(4, GameConfig.fourSpecialGame)) {
+				}else if(roomType.equals(RoomTools.createRoomType(4, GameConfig.fourCommonGame))) {
+					
+				}else if(roomType.equals(RoomTools.createRoomType(4, GameConfig.fourSpecialGame))) {
 					
 				}
 			}
-		}
+//		}
 		
 	}
 	
