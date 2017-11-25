@@ -233,7 +233,7 @@ public class JsonTools {
 			}else if("Game".equals(className)){//游戏数据参数
 				Game game = new Game();
 				JSONObject gameObject = jObject.getJSONObject("data");
-				Log.d("-----------------------------");
+//				Log.d("-----------------------------");
 				JSONArray ballList = gameObject.getJSONArray("ball_list");
 				List<Ball> balls = new ArrayList<Ball>();
 				for(int i=0;i<ballList.size();i++) {
@@ -247,11 +247,11 @@ public class JsonTools {
 					ball.setxA(object.getDouble("xA"));
 					ball.setyA(object.getDouble("yA"));
 					ball.setDegree(object.getDouble("degree"));
-					System.out.println(ball.toString());
+//					System.out.println(ball.toString());
 					balls.add(ball);
 				}
 				game.ball_list = balls;
-				Log.d("-----------------------------");
+//				Log.d("-----------------------------");
 				
 				JSONArray myBrickListObject = gameObject.getJSONArray("myBrickList");
 				List<Brick> myBrickList = new ArrayList<Brick>();  
@@ -264,11 +264,11 @@ public class JsonTools {
 					brick.setLocY(object.getDouble("locY"));
 					brick.setbPropsId(object.getString("bPropsId"));
 					brick.setHardness(object.getInt("hardness"));
-					System.out.println(brick.toString());
+//					System.out.println(brick.toString());
 					myBrickList.add(brick);
 				}  
 				game.myBrickList = myBrickList;
-				Log.d("-----------------------------");
+//				Log.d("-----------------------------");
 				
 				JSONArray enemyBrickListObject = gameObject.getJSONArray("enemyBrickList");
 				List<Brick> enemyBrickList = new ArrayList<Brick>();  
@@ -281,7 +281,7 @@ public class JsonTools {
 					brick.setLocY(object.getDouble("locY"));
 					brick.setbPropsId(object.getString("bPropsId"));
 					brick.setHardness(object.getInt("hardness"));
-					System.out.println(brick.toString());
+//					System.out.println(brick.toString());
 					enemyBrickList.add(brick);
 				}  
 				game.enemyBrickList = enemyBrickList;
@@ -294,8 +294,8 @@ public class JsonTools {
 				myboard.setLocY(myBoard.getDouble("locY"));
 				myboard.setySpeed(myBoard.getInt("ySpeed"));
 				myboard.setyA(myBoard.getInt("yA"));
-				Log.d("-----------------------------");
-				Log.d(myboard.toString());
+//				Log.d("-----------------------------");
+//				Log.d(myboard.toString());
 				game.myborad = myboard;
 				
 				JSONObject enemyBorad = gameObject.getJSONObject("enemyborad");
@@ -306,8 +306,8 @@ public class JsonTools {
 				enemyborad.setLocY(enemyBorad.getDouble("locY"));
 				enemyborad.setySpeed(enemyBorad.getInt("ySpeed"));
 				enemyborad.setyA(enemyBorad.getInt("yA"));
-				Log.d("-----------------------------");
-				Log.d(enemyborad.toString());
+//				Log.d("-----------------------------");
+//				Log.d(enemyborad.toString());
 				game.enemyborad = enemyborad;
 				
 				JSONObject boardPropsmap = gameObject.getJSONObject("boardPropsmap");
@@ -318,8 +318,8 @@ public class JsonTools {
 					String index =(String) keys.next();
 					String s = boardPropsmap.getString(index);
 					JSONObject boardPropsObject = JSONObject.fromObject(s);
-					Log.d("--------------------------------");
-					Log.d("index="+index+",s="+s);
+//					Log.d("--------------------------------");
+//					Log.d("index="+index+",s="+s);
 					BoardProps boardProps = new BoardProps();
 					boardProps.setPropsId(boardPropsObject.getString("propsId"));
 					boardProps.setPropsName(boardPropsObject.getString("propsName"));

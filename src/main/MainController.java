@@ -4,8 +4,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -13,10 +15,12 @@ import javax.swing.JFrame;
 import org.junit.Test;
 
 import rule.agreement.ConnectCommand;
+import rule.agreement.GameDataBoardCommand;
 import rule.agreement.GuestLoginCommand;
 import thread.entity.view.ThreadViewer;
 import tool.ClientTools;
 import tool.CommonTools;
+import tool.DataTransmitTools;
 import tool.RoomTools;
 import tool.JsonTools;
 import tool.agreement.DataBuffer;
@@ -35,6 +39,9 @@ import entity.info.Info;
 import entity.rooms.DoubleRoom;
 import entity.rooms.FourRoom;
 import entity.rooms.Room;
+import gameType.chuachua.data.ChuaChuaGameMainData;
+import gameType.chuachua.entity.Ball;
+import gameType.chuachua.entity.Game;
 
 /**
  * 服务器主类
@@ -44,6 +51,8 @@ public class MainController {
 	ServerSocket server = null;
 	// 服务器配置
 	ServerConfig sc = ServerConfig.getInstance();
+	//线程池线程(一个房间一个线程池)
+	List<TimeServerHandlerExecute> threadRoomsPoolList = new ArrayList<TimeServerHandlerExecute>();
 	TimeServerHandlerExecute singleExecutor = new TimeServerHandlerExecute(sc.roomCount);
 	Socket socket = null;
 	// 获取单例
@@ -102,16 +111,17 @@ public class MainController {
 						if(!g.mainiomap.containsKey(ip+"-"+port)) {
 							g.mainiomap.put(ip + "-" + port, mainIO);
 						}
+						
 						mainIO.sendMessage(new ConnectCommand(), JsonTools.getString(new Info("连接成功",JsonTools.getData(maps))));
 						mainIO.receiveMessage();
-
+						
 					} else {
 						Log.d("客户端:" + ip + "-" + port + "添加失败");
 					}
 				} else {
 					Log.d("客户端:" + ip + "用户达到上限");
 				}
-
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.d("客户端连接发生异常");
@@ -171,13 +181,15 @@ public class MainController {
 		MainController controller = new MainController();
 		try {
 			if (controller.startserver()) {
-
+				
 			}
 		} catch (Exception e) {
 			Log.d("服务器发生错误");
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	@Test
 	public void test() {

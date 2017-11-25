@@ -71,8 +71,7 @@ public class Game {
 	}
 	@Override
 	public String toString() {
-		return "Game [ball_list=" + ball_list + ", myBrickList=" + myBrickList + ", enemyBrickList=" + enemyBrickList
-				+ ", myborad=" + myborad + ", enemyborad=" + enemyborad + ", boardPropsmap=" + boardPropsmap + "]";
+		return "Game [ball_list=" + ball_list + ", myborad=" + myborad.toString() + ", enemyborad=" + enemyborad.toString()+ "]";
 	}
 	
 }

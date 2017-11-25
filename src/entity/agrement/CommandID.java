@@ -19,4 +19,6 @@ public class CommandID {
 	public final static int GameStart = 0x0014;//游戏开始
 	public final static int DisConnnect = 0x0015;//断开连接
 	public final static int GameData = 0x0016;//游戏数据
+	public final static int GameDataBoard = 0x0017;//游戏数据(板)
+	
 }

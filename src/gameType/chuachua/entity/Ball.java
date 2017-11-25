@@ -1,5 +1,8 @@
 package gameType.chuachua.entity;
 
+import config.GameConfig;
+import tool.ClientTools;
+
 public class Ball {
 
 	/**
@@ -30,8 +33,14 @@ public class Ball {
 	}
 	
 	public void move(double t) {
-		bx = bx+t*xSpeed;
-		by = by+t*ySpeed;
+		if(bx<=0 || bx>=gameType.chuachua.config.GameConfig.WIDTH-d){
+			degree = Math.PI-degree;
+		}
+		if(by<=0 || by>=gameType.chuachua.config.GameConfig.HEIGHT-2*d){
+			degree = -degree;
+		}
+		bx = bx+xSpeed*Math.cos(degree);
+		by = by+ySpeed*Math.sin(degree);
 	}
 	
 	public int getD() {

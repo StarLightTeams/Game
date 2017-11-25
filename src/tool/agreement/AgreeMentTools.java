@@ -7,6 +7,7 @@ import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import rule.agreement.ConnectCommand;
 import rule.agreement.DisconnectCommand;
+import rule.agreement.GameDataBoardCommand;
 import rule.agreement.GameDataCommand;
 import rule.agreement.GameLoadingCommand;
 import rule.agreement.GamePreparingCommand;
@@ -65,6 +66,8 @@ public class AgreeMentTools {
 			return new DisconnectCommand(id);
 		}else if(id == CommandID.GameData){
 			return new GameDataCommand(id);
+		}else if(id == CommandID.GameDataBoard){
+			return new GameDataBoardCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -109,6 +112,8 @@ public class AgreeMentTools {
 			return CommandID.DisConnnect;
 		}else if(iCommand.getClass().equals(GameDataCommand.class)){//游戏数据协议
 			return CommandID.GameData;
+		}else if(iCommand.getClass().equals(GameDataBoardCommand.class)){
+			return CommandID.GameDataBoard;
 		}else {
 			//返回错误协议数据
 			return -1;

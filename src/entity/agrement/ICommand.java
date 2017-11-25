@@ -17,6 +17,7 @@ public class ICommand {
 	
 	public void WriteToBuffer(DataBuffer buffer,String str){
 		pos = buffer.Tell();
+		System.out.println("pos====="+pos);
 		buffer.WriteInt(header.length);
 		buffer.WriteInt(header.id);
 		WriteBody(buffer,str);

@@ -17,6 +17,8 @@ public class Room {
 	public Map<Player,Integer> playermap = new HashMap<Player,Integer>();
 	//房间规则
 	public RoomRule roomRule = new RoomRule();
+	public Thread roomThread;
+	
 	public RoomInfo getRoomInfo() {
 		return roomInfo;
 	}
@@ -35,5 +37,13 @@ public class Room {
 	public void setRoomRule(RoomRule roomRule) {
 		this.roomRule = roomRule;
 	}
+	public Thread getRoomThread() {
+		return roomThread;
+	}
+	public void setRoomThread(Thread roomThread) {
+		this.roomThread = roomThread;
+	}
+	
+	
 	
 }

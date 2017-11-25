@@ -154,7 +154,6 @@ public class DataBuffer {
 //		if (length > 255) {
 //			length = 255;
 //		}
-//		System.out.println("length="+length);
 		WriteChar((char) length);
 		// System.arraycopy(data, startPos, buffer, position, length);
 		// strncpy((char *)buffer+position, (const char*)data+startPos, length);
@@ -246,7 +245,7 @@ public class DataBuffer {
 	}
 	public char[] getChars (byte[] bytes) {
 	      Charset cs = Charset.forName ("UTF-8");
-	      System.out.println("bytes.length="+bytes.length);
+//	      System.out.println("bytes.length="+bytes.length);
 	      ByteBuffer bb = ByteBuffer.allocate (bytes.length);
 	      bb.put (bytes);
 	                 bb.flip ();

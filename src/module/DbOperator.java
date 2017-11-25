@@ -124,6 +124,7 @@ public class DbOperator {
 					return true;
 				}else {
 					Log.d("用户名密码错误");
+					con.commit();
 					return false;
 				}
 			}else {
@@ -249,6 +250,7 @@ public class DbOperator {
 			}else {
 				Log.d("创建个人信息失败");
 				mainIO.sendMessage(new GeneralInformationCommand(), JsonTools.getString(new Info("注册中","创建个人信息失败")));
+				con.commit();
 				return false;
 			}
 		} catch (SQLException e) {

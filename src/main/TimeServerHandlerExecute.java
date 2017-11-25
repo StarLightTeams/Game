@@ -23,7 +23,6 @@ public class TimeServerHandlerExecute {
 //		executeor.execute(task);
 //	}
 	
-	// 单例模式 双重校验锁
 	public static ExecutorService executeor;
 	
 	
