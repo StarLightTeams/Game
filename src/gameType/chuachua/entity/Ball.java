@@ -43,6 +43,133 @@ public class Ball {
 		by = by+ySpeed*Math.sin(degree);
 	}
 	
+	public void ballHitBoard2(Ball ball ,Board board){
+		
+		int change = 0;
+		
+		double bx = ball.getBx()+ball.getD()/2;
+		double by = ball.getBy()+ball.getD()/2;
+		
+		//×ó·¶Î§¿é
+		double leftSX = board.getLocX()-ball.getD()/2;
+		double leftEX = board.getLocX()+ball.getD()/2;
+		double leftSY = board.getLocY();
+		double leftEY = board.getLocY()+board.getHeight();
+		if(bx>leftSX && bx<leftEX && by>=leftSY&&by<=leftEY){
+			if(change==0){				
+				ball.setDegree(Math.PI - ball.getDegree());
+				change = 1;
+			}
+		}
+		
+		//ÉÏ·¶Î§¿é
+		double upSX = board.getLocX();
+		double upEX = board.getLocX()+board.getWidth();
+		double upSY = board.getLocY()-ball.getD()/2;
+		double upEY = board.getLocY()+ball.getD()/2;
+		if(bx>=upSX && bx<=upEX && by>upSY && by<upEY){
+			if(change==0){
+				ball.setDegree(-ball.getDegree());
+				change =1;
+			}
+		}
+		
+		//ÓÒ·¶Î§¿é
+		double rightSX = board.getLocX()+board.getWidth()-ball.getD()/2;
+		double rightEX = board.getLocX()+board.getWidth()+ball.getD()/2;
+		double rightSY = board.getLocY();
+		double rightEY = board.getLocY()+board.getHeight();
+		if(bx>rightSX && bx <rightEX && by>=rightSY && by<=rightEY){
+			if(change==0){
+				ball.setDegree(Math.PI - ball.getDegree());
+				change =1;
+			}
+		}
+		
+		//ÏÂ·¶Î§¿é
+		double downSX = board.getLocX();
+		double downEX = board.getLocX()+board.getWidth();
+		double downSY = board.getLocY()+board.getHeight()-ball.getD()/2;
+		double downEY = board.getLocY()+board.getHeight()+ball.getD()/2;
+		if(bx >= downSX && bx<=downEX && by >downSY &&by<downEY){
+			if(change == 0){				
+				ball.setDegree(-1*ball.getDegree());
+				change = 1;
+			}
+		}
+		
+		//×óÉÏ½Ç·¶Î§¿é
+		double leftUpSX = board.getLocX()-ball.getD()/2;
+		double leftUpEX = board.getLocX();
+		double leftUpSY = board.getLocY() - ball.getD()/2;
+		double leftUpEY = board.getLocY();
+		double leftUpBBX = board.getLocX();
+		double leftUpBBY = board.getLocY();
+		if(bx>=leftUpSX && bx<=leftUpEX && by>=leftUpSY && by<=leftUpEY){
+			double distance = Math.sqrt((bx-leftUpBBX)*(bx-leftUpBBX)+(by-leftUpBBY)*(by-leftUpBBY));
+			if(ball.getD()<=distance){
+				if(change == 0){
+					ball.setDegree(Math.PI-Math.abs(ball.getDegree()));
+					change =1;
+				}
+			}
+		}
+		
+		//ÓÒÉÏ½Ç·¶Î§¿é
+		double rightUpSX = board.getLocX()+board.getWidth();
+		double rightUpEX = board.getLocX()+board.getWidth()+ball.getD()/2;
+		double rightUpSY = board.getLocY() - ball.getD()/2;
+		double rightUpEY = board.getLocY();
+		double rightUpBBX = board.getLocX()+board.getWidth();
+		double rightUpBBY = board.getLocY();
+		if(bx>=rightUpSX && bx<=rightUpEX && by>=rightUpSY&& by<=rightUpEY){
+			double distance = Math.sqrt((bx-rightUpBBX)*(bx-rightUpBBX)+(by-rightUpBBY)*(by-rightUpBBY));
+			if(ball.getD()<=distance){
+				if(change == 0){
+					ball.setDegree(Math.PI-Math.abs(ball.getDegree()));
+					change = 1;
+				}
+				
+			}
+		}
+		
+		//×óÏÂ½Ç·¶Î§¿é
+		double leftDownSX = board.getLocX() - ball.getD()/2;
+		double leftDownEX = board.getLocX();
+		double leftDownSY = board.getLocY()+board.getHeight();
+		double leftDownEY = board.getLocY()+board.getHeight()+ball.getD()/2;
+		double leftDownBBX = board.getLocX();
+		double leftDownBBY = board.getLocY()+board.getHeight();
+		if(bx>=leftDownSX && bx<=leftDownEX && by>=leftDownSY&&by<=leftDownEY){
+			double distance = Math.sqrt((bx-leftDownBBX)*(bx-leftDownBBX)+(by-leftDownBBY)*(by-leftDownBBY));
+			if(ball.getD()<=distance){
+				if(change == 0){
+					ball.setDegree(Math.PI-Math.abs(ball.getDegree()));
+					change = 1;
+				}
+			}
+		}
+		
+		//ÓÒÏÂ½Ç·¶Î§¿é
+		double rightDownSX = board.getLocX()+board.getWidth();
+		double rightDownEX = board.getLocX()+board.getWidth()+ball.getD()/2;
+		double rightDownSY = board.getLocY()+board.getHeight();
+		double rightDownEY = board.getLocY()+board.getHeight()+ball.getD()/2;
+		double rightDownBBX = board.getLocX()+board.getWidth();
+		double rightDownBBY = board.getLocY()+board.getHeight();
+		if(bx >=rightDownSX && bx <=rightDownEX && by>=rightDownSY && by<=rightDownEY){
+			double distance = Math.sqrt((bx-rightDownBBX)*(bx-rightDownBBX)+(by-rightDownBBY)*(by-rightDownBBY));
+			if(ball.getD()<=distance){
+				if(change == 0){
+					ball.setDegree(Math.PI-Math.abs(ball.getDegree()));
+					change =1;
+				}
+			}
+		}
+			
+	}
+	
+	
 	public int getD() {
 		return d;
 	}

@@ -334,23 +334,11 @@ public class MainIO {
 						Game g = ChuaChuaGameMainData.gameData.get(roomId);
 						g.setBall_list(game.ball_list);
 						g.setBoardPropsmap(game.boardPropsmap);
-						if(no == 1) {
-							g.setMyborad(game.myborad);
-						}else if(no == 2) {
-							g.setEnemyborad(game.myborad);
-						}
+						g.setMyborad(game.myborad);
+						g.setEnemyborad(game.enemyborad);
 						g.setEnemyBrickList(game.enemyBrickList);
 						g.setMyBrickList(game.myBrickList);
-						
-//						Map<String,String> mmmaps = new HashMap<String, String>();
-//						mmmaps.put("roomType", roomType);
-//						mmmaps.put("roomId", roomId);
-//						mmmaps.put("clientName", clientId);
-//						mmmaps.put("Game",JsonTools.getString(g));
-						//不用线程池原因,历史遗留问题,收到"",解析为空的字符串
-//						new Thread(new roomThread(roomId,roomType,clientId)).start();
-//						singleExecutor.excute(new roomThread(roomId,roomType,clientId));
-						
+						ChuaChuaGameMainData.clientId = clientId;
 						Log.d("----------------------------数据处理----------------------------------");
 					}
 //					else if(commandId == CommandID.GameDataBoard) {
@@ -376,6 +364,9 @@ public class MainIO {
 		}
 	}
 	
+	/**
+	 * 房间数据控制线程
+	 */
 	public class gameDataThread implements Runnable{
 		String roomId;
 		String roomType;
@@ -398,25 +389,20 @@ public class MainIO {
 					ball.move(1);
 				}
 				
+				for(int i=0;i<balls.size();i++) {
+					Ball ball = balls.get(i);
+					ball.ballHitBoard2(ball,game.myborad);
+					ball.ballHitBoard2(ball,game.enemyborad);
+				}
+				
 				game.ball_list = balls;
 				Room room = GameData.getSingleton().roommap.get(roomType).get(roomId);
-//				Game otherG = new Game();
-//				otherG.ball_list = game.ball_list;
-//				otherG.boardPropsmap = game.boardPropsmap;
-//				otherG.enemyBrickList = game.enemyBrickList;
-//				otherG.myBrickList = game.myBrickList;
-//				otherG.myborad = game.myborad;
-//				otherG.enemyborad = game.enemyborad;
 				Map<String,String> mmaps = new HashMap<String, String>();
 				mmaps.put("roomType", roomType);
 				mmaps.put("roomId", roomId);
-//				mmaps.put("clientName", clientId);
-//				mmaps.put("Game",JsonTools.getString(otherG));
 				//给房间的其它人发送信息                 
 //				DataTransmitTools.sendClientsMessage(room.playermap, new GameDataBoardCommand(),JsonTools.getString(new Info("游戏加载数据",JsonTools.getData(mmaps))), singleExecutor);
-//				for(Player p :room.playermap.keySet()) {//座位一的myboard发给自己,座位二的enemy的locX等于myboard.locX
-					DataTransmitTools.sendClientsMessage(room.playermap, new GameDataCommand(),mmaps,singleExecutor);
-//				}
+				DataTransmitTools.sendClientsMessage(room.playermap, new GameDataCommand(),mmaps,singleExecutor);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {

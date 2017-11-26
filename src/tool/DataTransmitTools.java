@@ -87,19 +87,11 @@ public class DataTransmitTools {
 			g.setMyBrickList(game.myBrickList);
 			g.setEnemyBrickList(game.enemyBrickList);
 			g.setMyborad(game.myborad);
-//			System.out.println("--------------------------="+players.get(player));
-			if(players.get(player) == 1) { //座位一
-				mmaps.put("type", "1");
-				mmaps.put("Game", JsonTools.getString(game));
-			}else if(players.get(player) == 2){
-				mmaps.put("type", "2");
-				double moveX = g.enemyborad.locX;
-				g.enemyborad.locX = g.myborad.locX;
-				g.myborad.locX = moveX;
-				mmaps.put("Game", JsonTools.getString(g));
+			mmaps.put("Game", JsonTools.getString(game));
+			if(!player.clientId.equals(ChuaChuaGameMainData.clientId)&&ChuaChuaGameMainData.clientId!=null) {
+				mmaps.put("clientName",ChuaChuaGameMainData.clientId);
+				mainIo.sendMessage(icommand, JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))));                                           
 			}
-//				mmaps.put("Game", JsonTools.getString(game));
-			mainIo.sendMessage(icommand, JsonTools.getString(new Info("游戏数据",JsonTools.getData(mmaps))));
 		}
 	}
 	

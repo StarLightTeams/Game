@@ -14,5 +14,7 @@ import java.util.Map;
 public class ChuaChuaGameMainData {
 	//map《房间号，房间游戏数据》  
 	public volatile static Map<String,Game> gameData =new HashMap<String,Game>();
+	//当前的玩家的ip+'-'+port
+	public volatile static String clientId;
 	
 }
